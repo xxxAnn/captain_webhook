@@ -1,7 +1,8 @@
 token_const = "NzAxOTU4NDc3NjUxNzcxNDAz.Xp5POA.yjVjWeOcEIhWHBVfrvYl524RItc"
 prefix_var = "p!"
 admin_list = [489561787717648394, 497582475091116042, 331431342438875137]
-topic_message = "New topic: {0}"
+topic_message = "{0}"
+
 
 class bot_config:
     def __init__(self, token, prefix, admins, default_topic):
