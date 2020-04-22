@@ -4,17 +4,24 @@ from discord.ext.commands import Bot
 from discord.ext.commands import CommandNotFound
 from discord.ext.commands import has_permissions
 import json
+import functools
 from pirate_lib import get_topic
 from pirate_lib import write_file
 from pirate_lib import pull_flag
 from pirate_lib import read_file
 from pirate_lib import append_topic
+from pirate_lib import _resolve_member_id
+from pirate_lib import pirate_error
 from config import get_config
 import time
+import argparse
+import shlex
+import traceback
 epoch = time.time()
 config = get_config()
 client = Bot(command_prefix=config.prefix, case_insensitive=True)
 last_topic = -1
+
 
 @client.event
 async def on_ready():
@@ -22,10 +29,7 @@ async def on_ready():
     print(client.user.name)
     print(client.user.id)
     print('------')
-    '''list = []
-    for i in list:
-        channel = client.get_channel(i)
-        await channel.delete()'''
+
 
 
 @client.event
@@ -119,6 +123,44 @@ async def addtopic(ctx, *topic):
     else:
         await ctx.send("You do not have permission to do that")
 
+
+@client.command()
+async def warn(ctx, user: discord.Member, *, arg):
+    if ctx.author.id in config.moderators or ctx.author.id in config.admins:
+        parser = argparse.ArgumentParser()
+        parser.add_argument('--reason', required=True, nargs="+")
+        try:
+            args = parser.parse_args(shlex.split(arg))
+        except argparse.ArgumentError:
+            raise pirate_error(f'An exception occurred trying to parse input "{arg}".')
+            traceback.print_exc()
+        if args.reason:
+            user_id = str(user.id)
+            moderator_id = str(ctx.author.id)
+            warn_dict = {
+                "user_id": user_id,
+                "reason": args.reason,
+                "epoch": int(time.time()),
+                "moderator_id": moderator_id,
+                "punishment_type": "warn"
+            }
+            await user.send("You have been warned for the following reason: {0}".format(args.reason))
+            write_file("warns.Json", warn_dict)
+            await ctx.send("Successfully warned user")
+            embed = discord.Embed(title="WARN {0}#{1}".format(user.display_name, user.discriminator), color=0x0d25cc)
+            embed.add_field(name="User".format(user.display_name),
+                            value="{0}".format(user.mention))
+            embed.add_field(name="Moderator".format(user.display_name),
+                            value="{0}".format(ctx.author.mention))
+            embed.add_field(name="Reason".format(args.reason),
+                            value="{0}".format(ctx.author.mention))
+            embed.add_field(name="Channel".format(user.display_name),
+                            value="{0}".format(ctx.channel))
+            await ctx.guild.get_channel(config.logs).send(embed=embed)
+        else:
+            await ctx.send("Missing required argument")
+    else:
+        await ctx.send("You don't have permission to do that, silly.")
 
 client.run(config.token)
 
