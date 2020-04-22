@@ -131,9 +131,9 @@ async def warn(ctx, user: discord.Member, *, arg):
         parser.add_argument('--reason', required=True, nargs="+")
         try:
             args = parser.parse_args(shlex.split(arg))
-        except argparse.ArgumentError:
-            raise pirate_error(f'An exception occurred trying to parse input "{arg}".')
-            traceback.print_exc()
+        except Exception as e:
+            await ctx.send(f'An exception occurred trying to parse input "{arg}": {e}')
+            return
         if args.reason:
             user_id = str(user.id)
             moderator_id = str(ctx.author.id)
