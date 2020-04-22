@@ -167,13 +167,13 @@ async def warn(ctx, user: discord.Member, *, arg):
 async def on_command_error(ctx, error):
     discord_error = discord.ext.commands.errors
     isinstance_dict = {
-        discord_error.MissingPermissions: "Missing permissions to perform that action!"
+        discord_error.MissingPermissions: "Missing permissions to perform that action!",
+        discord_error.CommandInvokeError: "There was an error executing that command!",
+        discord_error.BadArgument: "One or more arguments are invalid",
     }
     for key in isinstance_dict.keys():
         if isinstance(error, key):
             await ctx.send(isinstance_dict[key])
-
-
 
 
 client.run(config.token)
