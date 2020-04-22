@@ -3,6 +3,7 @@ import random
 
 
 class pirate_error(Exception):
+
     def __init__(self, *args):
         if args:
             self.txt = args[0]
@@ -71,6 +72,16 @@ def pull_flag(arg_list, flag_list):
     if len(output_list) == 0:
         return None
     return output_list
+
+
+def _resolve_member_id(ctx, input):
+    match = re.match('<@!?([0-9]+)>', id)
+
+    if match is not None:
+        user_id = int(match.groups(1))
+        return user_id
+
+    return input
 
 
 
