@@ -33,15 +33,12 @@ async def on_ready():
     print('------')
 
 
-
 @client.event
 async def on_message(message):
     await client.process_commands(message)
     if message.channel.id == 701922472538144778 and str.lower(message.content).startswith("suggestion:"):
         write_file("suggestions.Json", message.content)
         await message.channel.send("Suggestion saved")
-
-
 
 
 @client.event
@@ -179,6 +176,7 @@ async def define(ctx, word):
         for i in list_word_class:
             string+=("**{0}**: ".format(count) + " ".join(i) + "\n\n")
             count+=1
+        string=string.replace("(","")
         await ctx.send(string)
 
 
