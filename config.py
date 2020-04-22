@@ -1,7 +1,7 @@
 prefix_var = "p!"
 admin_list = [489561787717648394, 497582475091116042, 331431342438875137]
 topic_message = "{0}"
-from secret import token_const
+from secret import token_const # token_const must be your token
 
 
 class bot_config:
