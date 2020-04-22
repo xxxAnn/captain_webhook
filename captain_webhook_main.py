@@ -5,6 +5,7 @@ from discord.ext.commands import CommandNotFound
 from discord.ext.commands import has_permissions
 import json
 import functools
+import PyDictionary
 from pirate_lib import get_topic
 from pirate_lib import write_file
 from pirate_lib import pull_flag
@@ -21,6 +22,7 @@ epoch = time.time()
 config = get_config()
 client = Bot(command_prefix=config.prefix, case_insensitive=True)
 last_topic = -1
+dictionary = PyDictionary.PyDictionary()
 
 
 @client.event
@@ -163,6 +165,23 @@ async def warn(ctx, user: discord.Member, *, arg):
         await ctx.send("You don't have permission to do that, silly.")
 
 
+@client.command(aliases=['def'])
+async def define(ctx, word):
+    meaning = dictionary.meaning(word)
+    if meaning is None:
+        await ctx.send("Word not found")
+    else:
+        list_word_class = []
+        for i in meaning.keys():
+            list_word_class.append(meaning[i])
+        string = ""
+        count = 1
+        for i in list_word_class:
+            string+=("**{0}**: ".format(count) + " ".join(i) + "\n\n")
+            count+=1
+        await ctx.send(string)
+
+
 @client.event
 async def on_command_error(ctx, error):
     discord_error = discord.ext.commands.errors
@@ -174,6 +193,7 @@ async def on_command_error(ctx, error):
     for key in isinstance_dict.keys():
         if isinstance(error, key):
             await ctx.send(isinstance_dict[key])
+        print(error)
 
 
 client.run(config.token)
