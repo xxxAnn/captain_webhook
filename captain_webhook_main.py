@@ -162,6 +162,20 @@ async def warn(ctx, user: discord.Member, *, arg):
     else:
         await ctx.send("You don't have permission to do that, silly.")
 
+
+@client.event
+async def on_command_error(ctx, error):
+    discord_error = discord.ext.commands.errors
+    isinstance_dict = {
+        discord_error.MissingPermissions: "Missing permissions to perform that action!"
+    }
+    for key in isinstance_dict.keys():
+        if isinstance(error, key):
+            await ctx.send(isinstance_dict[key])
+
+
+
+
 client.run(config.token)
 
 
