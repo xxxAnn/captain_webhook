@@ -5,6 +5,7 @@ from discord.ext.commands import CommandNotFound
 from discord.ext.commands import has_permissions
 import json
 import functools
+from wiktionaryparser import WiktionaryParser
 import PyDictionary
 from pirate_lib import get_topic
 from pirate_lib import write_file
@@ -13,16 +14,18 @@ from pirate_lib import read_file
 from pirate_lib import append_topic
 from pirate_lib import _resolve_member_id
 from pirate_lib import pirate_error
+from pirate_lib import merriam_webster_dictionary
 from config import get_config
 import time
 import argparse
 import shlex
 import traceback
+parser = WiktionaryParser()
 epoch = time.time()
 config = get_config()
 client = Bot(command_prefix=config.prefix, case_insensitive=True)
 last_topic = -1
-dictionary = PyDictionary.PyDictionary()
+dictionary = merriam_webster_dictionary()
 
 
 @client.event
@@ -162,27 +165,39 @@ async def warn(ctx, user: discord.Member, *, arg):
         await ctx.send("You don't have permission to do that, silly.")
 
 
-@client.command()
-async def translate(ctx, word, language_code):
-    await ctx.send(dictionary.translate(word, language_code))
+@client.command(aliases=['infractions', 'warnings', 'viewwarn'])
+async def viewwarns(ctx, *user: discord.User):
+    if not user:
+        user = ctx.author
+    else:
+        user = user[0]
+    if user == ctx.author or ctx.author.id in config.moderators or ctx.author.id in config.admins:
+        warns = read_file('warns.Json')
+        warn_list = []
+        for warn in warns:
+            if warn["user_id"] == str(user.id):
+                warn_list.append(warn)
+        embed=discord.Embed(title="Warnings", color=0x0d25cc)
+        for i in warn_list:
+            embed.add_field(name="Warned at epoch " + str(i["epoch"]), value="Reason: " + str(i["reason"]))
+        await ctx.send(embed=embed)
 
 
 @client.command(aliases=['def'])
-async def define(ctx, word):
-    meaning = dictionary.meaning(word)
-    if meaning is None:
-        await ctx.send("Word not found")
+async def define(ctx, original_word):
+    word = parser.fetch(original_word)
+    definition = word[0]["definitions"][0]["text"]
+    pronunciation = word[0]["pronunciations"]["text"]
+    sound = word[0]["pronunciations"]["audio"]
+    if len(definition)>4:
+        definition = definition[:-(len(definition)-4)]
+    definition = "\n".join(definition)
+    pronunciation = " ".join(pronunciation)
+    if pronunciation =="":
+        await ctx.send(definition)
     else:
-        list_word_class = []
-        for i in meaning.keys():
-            list_word_class.append(meaning[i])
-        string = ""
-        count = 1
-        for i in list_word_class:
-            string+=("**{0}**: ".format(count) + ", ".join(i) + "\n\n")
-            count+=1
-        string=string.replace("(","")
-        await ctx.send(string)
+        await ctx.send(str.lower(original_word) + ' ['+pronunciation+']' + "\n\n" + definition)
+        await ctx.send("\n\nhttps:"+ str(sound[0]))
 
 
 @client.event
