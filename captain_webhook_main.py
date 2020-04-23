@@ -193,11 +193,8 @@ async def define(ctx, original_word):
         definition = definition[:-(len(definition)-4)]
     definition = "\n".join(definition)
     pronunciation = " ".join(pronunciation)
-    if pronunciation =="":
-        await ctx.send(definition)
-    else:
-        await ctx.send(str.lower(original_word) + ' ['+pronunciation+']' + "\n\n" + definition)
-        await ctx.send("\n\nhttps:"+ str(sound[0]))
+    await ctx.send(str.lower(original_word) + ' ['+pronunciation+']' + "\n\n" + definition)
+    await ctx.send("\n\nhttps:"+ str(sound[0]))
 
 
 @client.event
