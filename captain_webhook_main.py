@@ -165,6 +165,27 @@ async def warn(ctx, user: discord.Member, *, arg):
         await ctx.send("You don't have permission to do that, silly.")
 
 
+@client.command(aliases=['infractions', 'warnings', 'viewwarn'])
+async def viewwarns(ctx, *user: discord.User):
+    if not user:
+        user = ctx.author
+    else:
+        user = user[0]
+    if user == ctx.author or ctx.author.id in config.moderators or ctx.author.id in config.admins:
+        warns = read_file('warns.Json')
+        warn_list = []
+        for warn in warns:
+            if warn["user_id"] == str(user.id):
+                warn_list.append(warn)
+        string = ""
+        for i in warn_list:
+            string+="Warned for **" + str(i["reason"])+"** at epoch *" + str(i["epoch"]) + "*\n"
+        if string == "":
+            await ctx.send("No warnings found")
+        else:
+            await ctx.send(string)
+
+
 @client.command(aliases=['def'])
 async def define(ctx, original_word):
     word = parser.fetch(original_word)
