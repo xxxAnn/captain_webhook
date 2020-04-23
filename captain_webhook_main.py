@@ -5,6 +5,7 @@ from discord.ext.commands import CommandNotFound
 from discord.ext.commands import has_permissions
 import json
 import functools
+import PyDictionary
 from pirate_lib import get_topic
 from pirate_lib import write_file
 from pirate_lib import pull_flag
@@ -21,6 +22,7 @@ epoch = time.time()
 config = get_config()
 client = Bot(command_prefix=config.prefix, case_insensitive=True)
 last_topic = -1
+dictionary = PyDictionary.PyDictionary()
 
 
 @client.event
@@ -31,15 +33,12 @@ async def on_ready():
     print('------')
 
 
-
 @client.event
 async def on_message(message):
     await client.process_commands(message)
     if message.channel.id == 701922472538144778 and str.lower(message.content).startswith("suggestion:"):
         write_file("suggestions.Json", message.content)
         await message.channel.send("Suggestion saved")
-
-
 
 
 @client.event
@@ -131,9 +130,9 @@ async def warn(ctx, user: discord.Member, *, arg):
         parser.add_argument('--reason', required=True, nargs="+")
         try:
             args = parser.parse_args(shlex.split(arg))
-        except argparse.ArgumentError:
-            raise pirate_error(f'An exception occurred trying to parse input "{arg}".')
-            traceback.print_exc()
+        except Exception as e:
+            await ctx.send(f'An exception occurred trying to parse input "{arg}": {e}')
+            return
         if args.reason:
             user_id = str(user.id)
             moderator_id = str(ctx.author.id)
@@ -161,6 +160,39 @@ async def warn(ctx, user: discord.Member, *, arg):
             await ctx.send("Missing required argument")
     else:
         await ctx.send("You don't have permission to do that, silly.")
+
+
+@client.command(aliases=['def'])
+async def define(ctx, word):
+    meaning = dictionary.meaning(word)
+    if meaning is None:
+        await ctx.send("Word not found")
+    else:
+        list_word_class = []
+        for i in meaning.keys():
+            list_word_class.append(meaning[i])
+        string = ""
+        count = 1
+        for i in list_word_class:
+            string+=("**{0}**: ".format(count) + " ".join(i) + "\n\n")
+            count+=1
+        string=string.replace("(","")
+        await ctx.send(string)
+
+
+@client.event
+async def on_command_error(ctx, error):
+    discord_error = discord.ext.commands.errors
+    isinstance_dict = {
+        discord_error.MissingPermissions: "Missing permissions to perform that action!",
+        discord_error.CommandInvokeError: "There was an error executing that command!",
+        discord_error.BadArgument: "One or more arguments are invalid",
+    }
+    for key in isinstance_dict.keys():
+        if isinstance(error, key):
+            await ctx.send(isinstance_dict[key])
+        print(error)
+
 
 client.run(config.token)
 
