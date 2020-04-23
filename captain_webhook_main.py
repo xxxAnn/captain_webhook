@@ -190,7 +190,7 @@ async def define(ctx, original_word):
     definition = word[0]["definitions"][0]["text"]
     pronunciation = word[0]["pronunciations"]["text"]
     sound = word[0]["pronunciations"]["audio"]
-    pages = Pages(ctx, entries=definition, per_page=4, custom_title="Definition of " +original_word)
+    pages = Pages(ctx, entries=definition, per_page=4, custom_title="Definition of " + original_word)
     await pages.paginate()
 
 
