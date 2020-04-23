@@ -174,7 +174,7 @@ async def define(ctx, word):
         string = ""
         count = 1
         for i in list_word_class:
-            string+=("**{0}**: ".format(count) + " ".join(i) + "\n\n")
+            string+=("**{0}**: ".format(count) + ", ".join(i) + "\n\n")
             count+=1
         string=string.replace("(","")
         await ctx.send(string)
