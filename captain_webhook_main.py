@@ -177,13 +177,10 @@ async def viewwarns(ctx, *user: discord.User):
         for warn in warns:
             if warn["user_id"] == str(user.id):
                 warn_list.append(warn)
-        string = ""
+        embed=discord.Embed(title="Warnings", color=0x0d25cc)
         for i in warn_list:
-            string+="Warned for **" + str(i["reason"])+"** at epoch *" + str(i["epoch"]) + "*\n"
-        if string == "":
-            await ctx.send("No warnings found")
-        else:
-            await ctx.send(string)
+            embed.add_field(name="Warned at epoch " + str(i["epoch"]), value="Reason: " + str(i["reason"]))
+        await ctx.send(embed=embed)
 
 
 @client.command(aliases=['def'])
