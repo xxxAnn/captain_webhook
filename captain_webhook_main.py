@@ -5,6 +5,7 @@ from discord.ext.commands import CommandNotFound
 from discord.ext.commands import has_permissions
 import json
 import functools
+from wiktionaryparser import WiktionaryParser
 import PyDictionary
 from pirate_lib import get_topic
 from pirate_lib import write_file
@@ -19,6 +20,7 @@ import time
 import argparse
 import shlex
 import traceback
+parser = WiktionaryParser()
 epoch = time.time()
 config = get_config()
 client = Bot(command_prefix=config.prefix, case_insensitive=True)
@@ -163,15 +165,21 @@ async def warn(ctx, user: discord.Member, *, arg):
         await ctx.send("You don't have permission to do that, silly.")
 
 
-@client.command()
-async def translate(ctx, word, language_code):
-    await ctx.send(dictionary.translate(word, language_code))
-
-
 @client.command(aliases=['def'])
-async def define(ctx, word):
-    string = "; \n".join(dictionary.get_definition(word))
-    await ctx.send(string)
+async def define(ctx, original_word):
+    word = parser.fetch(original_word)
+    definition = word[0]["definitions"][0]["text"]
+    pronunciation = word[0]["pronunciations"]["text"]
+    sound = word[0]["pronunciations"]["audio"]
+    if len(definition)>4:
+        definition = definition[:-(len(definition)-4)]
+    definition = "\n".join(definition)
+    pronunciation = " ".join(pronunciation)
+    if pronunciation =="":
+        await ctx.send(definition)
+    else:
+        await ctx.send(str.lower(original_word) + ' ['+pronunciation+']' + "\n\n" + definition)
+        await ctx.send("\n\nhttps:"+ str(sound[0]))
 
 
 @client.event
