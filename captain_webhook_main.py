@@ -7,6 +7,7 @@ import json
 import functools
 from wiktionaryparser import WiktionaryParser
 import PyDictionary
+from paginator import Pages
 from pirate_lib import get_topic
 from pirate_lib import write_file
 from pirate_lib import pull_flag
@@ -189,12 +190,8 @@ async def define(ctx, original_word):
     definition = word[0]["definitions"][0]["text"]
     pronunciation = word[0]["pronunciations"]["text"]
     sound = word[0]["pronunciations"]["audio"]
-    if len(definition)>4:
-        definition = definition[:-(len(definition)-4)]
-    definition = "\n".join(definition)
-    pronunciation = " ".join(pronunciation)
-    await ctx.send(str.lower(original_word) + ' ['+pronunciation+']' + "\n\n" + definition)
-    await ctx.send("\n\nhttps:"+ str(sound[0]))
+    pages = Pages(ctx, entries=definition, per_page=4, custom_title="Definition of " +original_word)
+    await pages.paginate()
 
 
 @client.event
