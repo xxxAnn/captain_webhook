@@ -13,6 +13,7 @@ from pirate_lib import read_file
 from pirate_lib import append_topic
 from pirate_lib import _resolve_member_id
 from pirate_lib import pirate_error
+from pirate_lib import merriam_webster_dictionary
 from config import get_config
 import time
 import argparse
@@ -22,7 +23,7 @@ epoch = time.time()
 config = get_config()
 client = Bot(command_prefix=config.prefix, case_insensitive=True)
 last_topic = -1
-dictionary = PyDictionary.PyDictionary()
+dictionary = merriam_webster_dictionary()
 
 
 @client.event
@@ -169,20 +170,8 @@ async def translate(ctx, word, language_code):
 
 @client.command(aliases=['def'])
 async def define(ctx, word):
-    meaning = dictionary.meaning(word)
-    if meaning is None:
-        await ctx.send("Word not found")
-    else:
-        list_word_class = []
-        for i in meaning.keys():
-            list_word_class.append(meaning[i])
-        string = ""
-        count = 1
-        for i in list_word_class:
-            string+=("**{0}**: ".format(count) + ", ".join(i) + "\n\n")
-            count+=1
-        string=string.replace("(","")
-        await ctx.send(string)
+    string = "; \n".join(dictionary.get_definition(word))
+    await ctx.send(string)
 
 
 @client.event

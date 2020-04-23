@@ -1,5 +1,6 @@
 import json
 import random
+import requests
 
 
 class pirate_error(Exception):
@@ -83,5 +84,15 @@ def _resolve_member_id(ctx, input):
 
     return input
 
+class merriam_webster_dictionary:
 
+    def __init__(self):
+        self.key = "dbb88de0-aa1c-4289-a2e4-fa8ce2a35614"
+        self.dictionary_url = "https://www.dictionaryapi.com/api/v3/references/collegiate/json/"
+        self.wav_file_url = "https://media.merriam-webster.com/soundc11"
 
+    def get_definition(self, word):
+        url = self.dictionary_url + word
+        request = requests.get(url=url, params= {"key": self.key})
+        word_data = request.json()
+        return word_data[0]['shortdef']
