@@ -162,6 +162,11 @@ async def warn(ctx, user: discord.Member, *, arg):
         await ctx.send("You don't have permission to do that, silly.")
 
 
+@client.command()
+async def translate(ctx, word, language_code):
+    await ctx.send(dictionary.translate(word, language_code))
+
+
 @client.command(aliases=['def'])
 async def define(ctx, word):
     meaning = dictionary.meaning(word)
