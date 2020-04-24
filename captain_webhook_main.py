@@ -52,7 +52,7 @@ async def on_voice_state_update(member, before, after):
         if channel.id == 702169810028724297:
             guild = member.guild
             category = client.get_channel(700665944279875654)
-            channel = await guild.create_voice_channel(name="2 People Group", user_limit=2, category=category) # create channel
+            channel = await guild.create_voice_channel(name="Private group", user_limit=2, category=category) # create channel
             role = guild.get_role(700732374471934053)
             overwrite = {
                 guild.default_role: discord.PermissionOverwrite(read_messages=False),
@@ -60,7 +60,7 @@ async def on_voice_state_update(member, before, after):
                 role: discord.PermissionOverwrite(read_messages=True),
                 client.user: discord.PermissionOverwrite(manage_permissions=True, read_messages=True, manage_channels=True)
             }
-            text_channel = await guild.create_text_channel(name="2 People Group", category=category, position=0, overwrites=overwrite)
+            text_channel = await guild.create_text_channel(name="private-group", category=category, position=0, overwrites=overwrite)
             await member.move_to(channel) # move member
             write_file("to_delete.Json", value=text_channel.id, key=str(channel.id)) # adds channel id to the "to_delete" list
         with open('to_delete.Json', 'r') as to_delete:
@@ -76,7 +76,7 @@ async def on_voice_state_update(member, before, after):
                 await channel.delete()
                 text_channel = client.get_channel(to_delete_list[str(channel.id)])
                 await text_channel.delete()
-            elif str(channel.id) in to_delete_list.keys():
+            elif str(channel.id) in to_delete_list.keys() and after.channel is not before.channel:
                 text_channel = client.get_channel(to_delete_list[str(channel.id)])
                 await text_channel.set_permissions(member, read_messages=False)
 
