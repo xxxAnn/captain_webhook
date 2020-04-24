@@ -76,7 +76,7 @@ async def on_voice_state_update(member, before, after):
                 await channel.delete()
                 text_channel = client.get_channel(to_delete_list[str(channel.id)])
                 await text_channel.delete()
-            elif str(channel.id) in to_delete_list.keys():
+            elif str(channel.id) in to_delete_list.keys() and after.channel is not before.channel:
                 text_channel = client.get_channel(to_delete_list[str(channel.id)])
                 await text_channel.set_permissions(member, read_messages=False)
 
