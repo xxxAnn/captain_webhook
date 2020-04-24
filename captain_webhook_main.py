@@ -198,7 +198,7 @@ async def define(ctx, original_word):
 async def changelimit(ctx, limit: int):
     to_delete = read_file("to_delete.Json")
     if ctx.channel.id in to_delete.values():
-        vc_channel_id = list(mydict.keys())[list(mydict.values()).index(ctx.channel.id)]
+        vc_channel_id = list(to_delete.keys())[list(to_delete.values()).index(ctx.channel.id)]
         vc_channel = client.get_channel(int(vc_channel_id))
         await vc_channel.edit(limit=limit)
 
