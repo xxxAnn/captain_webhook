@@ -130,24 +130,17 @@ async def addtopic(ctx, *topic):
 @client.command()
 async def warn(ctx, user: discord.Member, *, arg):
     if ctx.author.id in config.moderators or ctx.author.id in config.admins:
-        parser = argparse.ArgumentParser()
-        parser.add_argument('--reason', required=True, nargs="+")
-        try:
-            args = parser.parse_args(shlex.split(arg))
-        except Exception as e:
-            await ctx.send(f'An exception occurred trying to parse input "{arg}": {e}')
-            return
-        if args.reason:
+        if arg:
             user_id = str(user.id)
             moderator_id = str(ctx.author.id)
             warn_dict = {
                 "user_id": user_id,
-                "reason": args.reason,
+                "reason": arg,
                 "epoch": int(time.time()),
                 "moderator_id": moderator_id,
                 "punishment_type": "warn"
             }
-            await user.send("You have been warned for the following reason: {0}".format(args.reason))
+            await user.send("You have been warned for the following reason: {0}".format(arg))
             write_file("warns.Json", warn_dict)
             await ctx.send("Successfully warned user")
             embed = discord.Embed(title="WARN {0}#{1}".format(user.display_name, user.discriminator), color=0x0d25cc)
@@ -155,7 +148,7 @@ async def warn(ctx, user: discord.Member, *, arg):
                             value="{0}".format(user.mention))
             embed.add_field(name="Moderator".format(user.display_name),
                             value="{0}".format(ctx.author.mention))
-            embed.add_field(name="Reason".format(args.reason),
+            embed.add_field(name="Reason".format(arg),
                             value="{0}".format(ctx.author.mention))
             embed.add_field(name="Channel".format(user.display_name),
                             value="{0}".format(ctx.channel))
