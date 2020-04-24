@@ -149,7 +149,7 @@ async def warn(ctx, user: discord.Member, *, arg):
             embed.add_field(name="Moderator".format(user.display_name),
                             value="{0}".format(ctx.author.mention))
             embed.add_field(name="Reason".format(arg),
-                            value="{0}".format(ctx.author.mention))
+                            value="{0}".format(arg))
             embed.add_field(name="Channel".format(user.display_name),
                             value="{0}".format(ctx.channel))
             await ctx.guild.get_channel(config.logs).send(embed=embed)
