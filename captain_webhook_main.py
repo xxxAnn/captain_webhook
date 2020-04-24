@@ -201,7 +201,7 @@ async def changelimit(ctx, limit: int):
         vc_channel_id = list(to_delete.keys())[list(to_delete.values()).index(ctx.channel.id)]
         vc_channel = client.get_channel(int(vc_channel_id))
         await vc_channel.edit(user_limit=limit)
-        await ctx.send("hey")
+        await ctx.send("Successfully changed limit")
     else:
         await ctx.send("Channel is not a private channel")
 
