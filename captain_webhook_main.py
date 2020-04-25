@@ -67,7 +67,7 @@ async def on_voice_state_update(member, before, after):
                 client.user: discord.PermissionOverwrite(manage_permissions=True, read_messages=True, manage_channels=True)
             }
             text_channel = await guild.create_text_channel(name="private-group-{0}".format(channel_number), category=category, position=0, overwrites=overwrite)
-            message = "**__Welcome to your private chat room!\n Only users who are in the designated voice channel can see this room! Please follow the rules as these rooms are moderated!\n\nYou can use the p!changelimit (p!cl) command to change the amount of members that can join your channel!\nHave fun!! ||{0} ping ;)||**__".format(member.mention)
+            message = "**__Welcome to your private chat room!__\n Only users who are in the designated voice channel can see this room! Please follow the rules as these rooms are moderated!\n\nYou can use the p!changelimit (p!cl) command to change the amount of members that can join your channel!\nHave fun!! ||{0} ping ;)||**__".format(member.mention)
             await text_channel.send(message)
             await member.move_to(channel) # move member
             write_file("to_delete.Json", value=text_channel.id, key=str(channel.id)) # adds channel id to the "to_delete" list
