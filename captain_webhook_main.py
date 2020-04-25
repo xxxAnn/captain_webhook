@@ -44,7 +44,7 @@ async def on_message(message):
     await client.process_commands(message)
     if message.channel.id == 701922472538144778 and str.lower(message.content).startswith("suggestion:"):
         write_file("suggestions.Json", message.content)
-        await message.channel.send("Suggestion saved")
+        await message.channel.send("Suggestion saved.")
         channel = client.get_channel(703480588430082110)
         text = message.content.replace("Suggestion: ", "", 1)
         await channel.send(text.replace("suggestion: ", "", 1))
