@@ -7,6 +7,7 @@ import json
 import functools
 from wiktionaryparser import WiktionaryParser
 import PyDictionary
+import random
 from paginator import Pages
 from pirate_lib import get_topic
 from pirate_lib import write_file
@@ -27,7 +28,8 @@ config = get_config()
 client = Bot(command_prefix=config.prefix, case_insensitive=True)
 last_topic = -1
 dictionary = merriam_webster_dictionary()
-
+# client.remove_command(help)
+list_numbers_banned = []
 
 @client.event
 async def on_ready():
@@ -52,7 +54,11 @@ async def on_voice_state_update(member, before, after):
         if channel.id == 702169810028724297:
             guild = member.guild
             category = client.get_channel(700665944279875654)
-            channel = await guild.create_voice_channel(name="Private group", user_limit=2, category=category) # create channel
+            channel_number = random.randint(1111, 9999)
+            while channel_number in list_numbers_banned:
+                channel_number = random.randint(1111, 9999)
+            list_numbers_banned.append(channel_number)
+            channel = await guild.create_voice_channel(name="Private group {0}".format(channel_number), user_limit=2, category=category) # create channel
             role = guild.get_role(700732374471934053)
             overwrite = {
                 guild.default_role: discord.PermissionOverwrite(read_messages=False),
@@ -60,7 +66,9 @@ async def on_voice_state_update(member, before, after):
                 role: discord.PermissionOverwrite(read_messages=True),
                 client.user: discord.PermissionOverwrite(manage_permissions=True, read_messages=True, manage_channels=True)
             }
-            text_channel = await guild.create_text_channel(name="private-group", category=category, position=0, overwrites=overwrite)
+            text_channel = await guild.create_text_channel(name="private-group-{0}".format(channel_number), category=category, position=0, overwrites=overwrite)
+            message = "**__Welcome to your private chat room!\n Only users who are in the designated voice channel can see this room! Please follow the rules as these rooms are moderated!\n\nYou can use the p!changelimit (p!cl) command to change the amount of members that can join your channel!\nHave fun!!**__"
+            await text_channel.send(message)
             await member.move_to(channel) # move member
             write_file("to_delete.Json", value=text_channel.id, key=str(channel.id)) # adds channel id to the "to_delete" list
         with open('to_delete.Json', 'r') as to_delete:
@@ -190,6 +198,9 @@ async def define(ctx, original_word):
 @client.command(aliases=["cl"])
 async def changelimit(ctx, limit: int):
     to_delete = read_file("to_delete.Json")
+    if 0 > limit > 99:
+        await ctx.send("Must provide a number between 0 and 99")
+        return
     if ctx.channel.id in to_delete.values():
         vc_channel_id = list(to_delete.keys())[list(to_delete.values()).index(ctx.channel.id)]
         vc_channel = client.get_channel(int(vc_channel_id))
@@ -197,6 +208,11 @@ async def changelimit(ctx, limit: int):
         await ctx.send("Successfully changed limit")
     else:
         await ctx.send("Channel is not a private channel")
+
+
+'''@client.command()
+async def help(ctx):
+    pages = Pages(ctx, entries=help_list, per_page=6, custom_title="p!help")'''
 
 
 @client.event
