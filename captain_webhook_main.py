@@ -7,6 +7,7 @@ import json
 import functools
 from wiktionaryparser import WiktionaryParser
 import PyDictionary
+import random
 from paginator import Pages
 from pirate_lib import get_topic
 from pirate_lib import write_file
