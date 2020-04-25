@@ -36,7 +36,7 @@ async def on_ready():
     print('Logged in as')
     print(client.user.name)
     print(client.user.id)
-    print('------')
+    print('------')s
 
 
 @client.event
@@ -44,10 +44,10 @@ async def on_message(message):
     await client.process_commands(message)
     if message.channel.id == 701922472538144778 and str.lower(message.content).startswith("suggestion:"):
         write_file("suggestions.Json", message.content)
-        await message.channel.send("Suggestion saved")
+        await message.channel.send("Suggestion saved.")
         channel = client.get_channel(703480588430082110)
         text = message.content.replace("Suggestion: ", "", 1)
-        await channel.send(text.replace("suggestion: ", "", 1))
+        await channel.send("**Suggestion: **" + text.replace("suggestion: ", "", 1) + "\n")
 
 
 @client.event
@@ -183,9 +183,14 @@ async def viewwarns(ctx, *user: discord.User):
             if warn["user_id"] == str(user.id):
                 warn_list.append(warn)
         embed=discord.Embed(title="Warnings", color=0x0d25cc)
+        fields = 0
         for i in warn_list:
             embed.add_field(name="Warned at epoch " + str(i["epoch"]), value="Reason: " + str(i["reason"]))
-        await ctx.send(embed=embed)
+            fields+=1
+        if not fields > 0:
+            await ctx.send("User was never warned ;) yayy!")
+        else:
+            await ctx.send(embed=embed)
 
 
 @client.command(aliases=['def'])
