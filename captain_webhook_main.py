@@ -13,10 +13,11 @@ from pirate_lib import get_topic
 from pirate_lib import write_file
 from pirate_lib import pull_flag
 from pirate_lib import read_file
+from pirate_lib import get_nominee
+from pirate_lib import add_nominee
 from pirate_lib import append_topic
 from pirate_lib import _resolve_member_id
 from pirate_lib import pirate_error
-from pirate_lib import merriam_webster_dictionary
 from config import get_config
 import time
 import argparse
@@ -27,7 +28,6 @@ epoch = time.time()
 config = get_config()
 client = Bot(command_prefix=config.prefix, case_insensitive=True)
 last_topic = -1
-dictionary = merriam_webster_dictionary()
 # client.remove_command(help)
 list_numbers_banned = []
 
@@ -37,6 +37,8 @@ async def on_ready():
     print(client.user.name)
     print(client.user.id)
     print('------')
+    list = [703823310466842624, 703823310072315974]
+    # for i in list: await client.get_channel(i).delete()
 
 
 
@@ -219,12 +221,42 @@ async def changelimit(ctx, limit: int):
         await ctx.send("Channel is not a private channel")
 
 
+@client.command()
+async def nominate(ctx, user: discord.Member, role: discord.Role):
+    if not str(user.id) in read_file("elections.Json"):
+        add_nominee(user.id, role.id)
+        channel = 703988853379301416
+        if read_file("elections.Json")["message"] is False:
+            x = read_file("elections.Json")
+            embed = discord.Embed(title="Election ballots")
+            temp = ""
+            for i in x:
+                nom = get_nominee(ctx, i)
+                temp+='@'+nom.whois.display_name+' - '+nom.for_role.name
+            embed.add_field(name="Nominations", value=temp)
+            message_id = await channel.send(embed=embed)
+            x["message"] = message_id
+            with open("elections.Json", 'w') as file_output_object:
+                json.dump(x, file_output_object, sort_keys=True, indent=4, separators=(',', ': '))
+            file_output_object.close()
+        else:
+            message = channel.fetch_message(read_file("elections.Json")["message"])
+            temp = ""
+            embed = discord.Embed(title="Election ballots")
+            for i in x:
+                nom = get_nominee(ctx, i)
+                temp += '@' + nom.whois.display_name + ' - ' + nom.for_role.name
+            embed.add_field(name="Nominations", value=temp)
+            await message.edit(embed=embed)
+
+
+
 '''@client.command()
 async def help(ctx):
     pages = Pages(ctx, entries=help_list, per_page=6, custom_title="p!help")'''
 
 
-@client.event
+'''@client.event
 async def on_command_error(ctx, error):
     discord_error = discord.ext.commands.errors
     isinstance_dict = {
@@ -235,7 +267,7 @@ async def on_command_error(ctx, error):
     for key in isinstance_dict.keys():
         if isinstance(error, key):
             await ctx.send(isinstance_dict[key])
-        print(error)
+        print(error)'''
 
 
 client.run(config.token)

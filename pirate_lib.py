@@ -46,7 +46,7 @@ def write_file(filename, value, key=None):
             "The data found in that file cannot be read"
         )
     with open(filename, 'w') as file_output_object:
-        json.dump(file_content, file_output_object, sort_keys=True, indent=4, separators=(',', ': '))
+        json.dump(file_content, file_output_object, sort_keys=True, indent=4, separators=(',', ': '), skipkeys=True)
 
 
 def read_file(filename):
@@ -84,15 +84,48 @@ def _resolve_member_id(ctx, input):
 
     return input
 
-class merriam_webster_dictionary:
 
-    def __init__(self):
-        self.key = "dbb88de0-aa1c-4289-a2e4-fa8ce2a35614"
-        self.dictionary_url = "https://www.dictionaryapi.com/api/v3/references/collegiate/json/"
-        self.wav_file_url = "https://media.merriam-webster.com/soundc11"
+class Nominee:
 
-    def get_definition(self, word):
-        url = self.dictionary_url + word
-        request = requests.get(url=url, params= {"key": self.key})
-        word_data = request.json()
-        return word_data[0]['shortdef']
+    def __init__(self, vote_list, nominated_for, ctx):
+        self.whois = ctx.guild.get_member(id)
+        self.key = str(id)
+        self.votes = vote_list
+        self.for_role = ctx.guild.get_role(nominated_for)
+
+    def votes_aye(self):
+        votes_aye = 0
+        for vote in self.votes: votes_aye+=(1 if vote["vote"] is True else 0)
+        return votes_aye
+
+    def votes_nay(self):
+        votes_nay = 0
+        for vote in self.votes: votes_aye+=(1 if vote["vote"] is False else 0)
+        return votes_nay
+
+    def vote(self, voter, vote: bool):
+        data = read_file("elections.Json")
+        temp_list = {"voter_id": voter.id, "vote": vote}
+        data[self.key]["vote"].append(temp_list)
+        with open("elections.Json", 'w') as file_output_object:
+            json.dump(data, file_output_object, sort_keys=True, indent=4, separators=(',', ': '))
+
+    def votes(self):
+        return self.votes_aye()-self.votes_nay()
+
+
+def get_nominee(ctx, user_id: str):
+    nominees = read_file("elections.Json")
+    temp_dict = nominees[user_id]
+    return Nominee(ctx=ctx, vote_list=temp_dict["votes"], nominated_for=temp_dict["nominee_role_id"])
+
+
+def add_nominee(nominee_id: str, role_id: str):
+    temp_dict = {"nominee_role_id": role_id,
+      "votes": [
+      ]}
+    x=read_file("elections.Json")
+    x[nominee_id] = temp_dict
+    with open("elections.Json", 'w') as file_output_object:
+        json.dump(x, file_output_object, indent=4)
+
