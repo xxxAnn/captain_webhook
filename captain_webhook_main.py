@@ -246,6 +246,8 @@ async def nominate(ctx, user: discord.Member, role: discord.Role):
                         for wxz in role_list:
                             list_names += wxz.name
                         temp+='@'+nom.whois.display_name+' - '+" "+list_names
+                if temp == "":
+                    temp = "N/A"
                 embed.add_field(name="Nominations", value=temp)
                 message_id = await channel.send(embed=embed)
                 x["message"] = message_id.id
@@ -265,7 +267,9 @@ async def nominate(ctx, user: discord.Member, role: discord.Role):
                         list_names = ""
                         for wxz in role_list:
                             list_names+= " " +wxz.name
-                        temp += "\n"+ '@' + nom.whois.display_name + ' - ' + list_names
+                        temp += "\n"+ '@' + nom.whois.display_name + ' - ' +
+                if temp == "":
+                    temp = "N/A"
                 embed.add_field(name="Nominations", value=temp)
                 await message.edit(embed=embed)
     else:
@@ -289,6 +293,8 @@ async def nominate(ctx, user: discord.Member, role: discord.Role):
                     temp += "\n"+ '@' + nom.whois.display_name + ' - ' + list_names
                     print(temp)
             embed=discord.Embed(title="Election ballots")
+            if temp == "":
+                temp = "N/A"
             embed.add_field(name="Nominations", value=temp)
             await message.edit(embed=embed)
         else:
