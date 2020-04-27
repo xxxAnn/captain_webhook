@@ -81,8 +81,7 @@ async def on_voice_state_update(member, before, after):
             to_delete_list = json.load(to_delete)
             if str(channel.id) in to_delete_list.keys():
                 text_channel = client.get_channel(to_delete_list[str(channel.id)])
-                if not ctx.guild.get_role(700732374471934053) in member.roles:
-                    await text_channel.set_permissions(member, read_messages=True)
+                await text_channel.set_permissions(member, read_messages=True)
     channel = before.channel
     if channel is not None:
         with open('to_delete.Json', 'r') as to_delete:
@@ -93,7 +92,8 @@ async def on_voice_state_update(member, before, after):
                 await text_channel.delete()
             elif str(channel.id) in to_delete_list.keys() and after.channel is not before.channel:
                 text_channel = client.get_channel(to_delete_list[str(channel.id)])
-                await text_channel.set_permissions(member, read_messages=False)
+                if not member.guild.get_role(700732374471934053) in member.roles:
+                    await text_channel.set_permissions(member, read_messages=False)
 
 
 @client.command()
