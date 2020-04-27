@@ -267,7 +267,7 @@ async def nominate(ctx, user: discord.Member, role: discord.Role):
                         list_names = ""
                         for wxz in role_list:
                             list_names+= " " +wxz.name
-                        temp += "\n"+ '@' + nom.whois.display_name + ' - ' +
+                        temp += "\n"+ '@' + nom.whois.display_name + ' - ' + wxz.name
                 if temp == "":
                     temp = "N/A"
                 embed.add_field(name="Nominations", value=temp)
