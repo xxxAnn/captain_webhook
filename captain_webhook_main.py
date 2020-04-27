@@ -230,7 +230,7 @@ async def nominate(ctx, user: discord.Member, role: discord.Role):
             w=False
     if w:
         add_nominee(user.id, role.id)
-        channel = client.get_channel(703988853379301416)
+        channel = client.get_channel(703035799138074715)
         if read_file("elections.Json")["message"] is False:
             x = read_file("elections.Json")
             embed = discord.Embed(title="Election ballots")
@@ -270,7 +270,7 @@ async def nominate(ctx, user: discord.Member, role: discord.Role):
 async def help(ctx):
     pages = Pages(ctx, entries=help_list, per_page=6, custom_title="p!help")'''
 
-'''@client.event
+@client.event
 async def on_command_error(ctx, error):
     discord_error = discord.ext.commands.errors
     isinstance_dict = {
@@ -281,7 +281,7 @@ async def on_command_error(ctx, error):
     for key in isinstance_dict.keys():
         if isinstance(error, key):
             await ctx.send(isinstance_dict[key])
-        print(error)'''
+        print(error)
 
 
 client.run(config.token)
