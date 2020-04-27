@@ -3,3 +3,4 @@ suggestions.Json
 secret.py
 *.pyc
 warns.Json
+*.Json

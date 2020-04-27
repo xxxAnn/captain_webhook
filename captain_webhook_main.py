@@ -13,10 +13,11 @@ from pirate_lib import get_topic
 from pirate_lib import write_file
 from pirate_lib import pull_flag
 from pirate_lib import read_file
+from pirate_lib import get_nominee
+from pirate_lib import add_nominee
 from pirate_lib import append_topic
 from pirate_lib import _resolve_member_id
 from pirate_lib import pirate_error
-from pirate_lib import merriam_webster_dictionary
 from config import get_config
 import time
 import argparse
@@ -27,7 +28,6 @@ epoch = time.time()
 config = get_config()
 client = Bot(command_prefix=config.prefix, case_insensitive=True)
 last_topic = -1
-dictionary = merriam_webster_dictionary()
 # client.remove_command(help)
 list_numbers_banned = []
 
@@ -37,6 +37,8 @@ async def on_ready():
     print(client.user.name)
     print(client.user.id)
     print('------')
+    list = [704019374780055643, 704019374310424808]
+    # for i in list: await client.get_channel(i).delete()
 
 
 
@@ -219,12 +221,55 @@ async def changelimit(ctx, limit: int):
         await ctx.send("Channel is not a private channel")
 
 
+@client.command()
+async def nominate(ctx, user: discord.Member, role: discord.Role):
+    w=True
+    if str(user.id) in read_file("elections.Json"):
+        if int(role.id) == read_file("elections.Json")[str(user.id)]["nominee_role_id"]:
+            w=False
+    if w:
+        add_nominee(user.id, role.id)
+        channel = client.get_channel(703988853379301416)
+        if read_file("elections.Json")["message"] is False:
+            x = read_file("elections.Json")
+            embed = discord.Embed(title="Election ballots")
+            temp = ""
+            for i in x.keys():
+                if i != "message":
+                    print(i)
+                    nom = get_nominee(ctx, i, ctx.guild.get_member(int(i)))
+                    role = ctx.guild.get_role(int(nom.for_role))
+                    temp+='@'+nom.whois.display_name+' - '+role.name
+            embed.add_field(name="Nominations", value=temp)
+            message_id = await channel.send(embed=embed)
+            x["message"] = message_id.id
+            with open("elections.Json", 'w') as file_output_object:
+                json.dump(x, file_output_object, sort_keys=True, indent=4, separators=(',', ': '))
+            file_output_object.close()
+        else:
+            message = await channel.fetch_message(int(read_file("elections.Json")["message"]))
+            temp = ""
+            embed = discord.Embed(title="Election ballots")
+            x = read_file("elections.Json")
+            for i in x.keys():
+                if i != "message":
+                    nom = get_nominee(ctx, i, user_object=ctx.guild.get_member(int(i)))
+                    role = ctx.guild.get_role(int(nom.for_role))
+                    temp += "\n"+ '@' + nom.whois.display_name + ' - ' + role.name
+            embed.add_field(name="Nominations", value=temp)
+            print(message.content)
+            await message.edit(embed=embed)
+    else:
+        await ctx.send("User was already nominated")
+
+
+
+
 '''@client.command()
 async def help(ctx):
     pages = Pages(ctx, entries=help_list, per_page=6, custom_title="p!help")'''
 
-
-@client.event
+'''@client.event
 async def on_command_error(ctx, error):
     discord_error = discord.ext.commands.errors
     isinstance_dict = {
@@ -235,7 +280,7 @@ async def on_command_error(ctx, error):
     for key in isinstance_dict.keys():
         if isinstance(error, key):
             await ctx.send(isinstance_dict[key])
-        print(error)
+        print(error)'''
 
 
 client.run(config.token)
