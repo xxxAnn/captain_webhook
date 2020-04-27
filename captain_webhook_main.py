@@ -224,53 +224,88 @@ async def changelimit(ctx, limit: int):
 
 @client.command()
 async def nominate(ctx, user: discord.Member, role: discord.Role):
-    w=True
-    if str(user.id) in read_file("elections.Json"):
-        if int(role.id) == read_file("elections.Json")[str(user.id)]["nominee_role_id"]:
+    list_roles = [700732836772053013, 700732374471934053, 701964825227427941, 700733089856356363]
+    if role.id in list_roles:
+        w=True
+        channel = client.get_channel(703035799138074715)  # 703035799138074715
+        if str(user.id) in read_file("elections.Json"):
             w=False
-    if w:
-        add_nominee(user.id, role.id)
-        channel = client.get_channel(703988853379301416)
-        if read_file("elections.Json")["message"] is False:
+        if w:
+            add_nominee(user.id, role.id)
+            if read_file("elections.Json")["message"] is False:
+                x = read_file("elections.Json")
+                embed = discord.Embed(title="Election ballots")
+                temp = ""
+                for i in x.keys():
+                    if i != "message":
+                        print(i)
+                        nom = get_nominee(ctx, i, ctx.guild.get_member(int(i)))
+                        role_list = []
+                        for role_id in nom.for_role: role_list.append(ctx.guild.get_role(int(role_id)))
+                        list_names = ""
+                        for wxz in role_list:
+                            list_names += wxz.name
+                        temp+='@'+nom.whois.display_name+' - '+" "+list_names
+                if temp == "":
+                    temp = "N/A"
+                embed.add_field(name="Nominations", value=temp)
+                message_id = await channel.send(embed=embed)
+                x["message"] = message_id.id
+                with open("elections.Json", 'w') as file_output_object:
+                    json.dump(x, file_output_object, sort_keys=True, indent=4, separators=(',', ': '))
+                file_output_object.close()
+            else:
+                message = await channel.fetch_message(int(read_file("elections.Json")["message"]))
+                temp = ""
+                embed = discord.Embed(title="Election ballots")
+                x = read_file("elections.Json")
+                for i in x.keys():
+                    if i != "message":
+                        nom = get_nominee(ctx, i, user_object=ctx.guild.get_member(int(i)))
+                        role_list = []
+                        for role_id in nom.for_role: role_list.append(ctx.guild.get_role(int(role_id)))
+                        list_names = ""
+                        for wxz in role_list:
+                            list_names+= " " +wxz.name
+                        temp += "\n"+ '@' + nom.whois.display_name + ' - ' +
+                if temp == "":
+                    temp = "N/A"
+                embed.add_field(name="Nominations", value=temp)
+                await message.edit(embed=embed)
+    else:
+        message = await channel.fetch_message(int(read_file("elections.Json")["message"]))
+        if not int(role.id) in read_file("elections.Json")[str(user.id)]["nominee_role_id"]:
             x = read_file("elections.Json")
-            embed = discord.Embed(title="Election ballots")
-            temp = ""
-            for i in x.keys():
-                if i != "message":
-                    print(i)
-                    nom = get_nominee(ctx, i, ctx.guild.get_member(int(i)))
-                    role = ctx.guild.get_role(int(nom.for_role))
-                    temp+='@'+nom.whois.display_name+' - '+role.name
-            embed.add_field(name="Nominations", value=temp)
-            message_id = await channel.send(embed=embed)
-            x["message"] = message_id.id
+            print(x[str(user.id)])
+            x[str(user.id)]["nominee_role_id"].append(int(role.id))
             with open("elections.Json", 'w') as file_output_object:
                 json.dump(x, file_output_object, sort_keys=True, indent=4, separators=(',', ': '))
-            file_output_object.close()
-        else:
-            message = await channel.fetch_message(int(read_file("elections.Json")["message"]))
-            temp = ""
-            embed = discord.Embed(title="Election ballots")
-            x = read_file("elections.Json")
+            x=read_file("elections.Json")
+            temp=''
             for i in x.keys():
                 if i != "message":
                     nom = get_nominee(ctx, i, user_object=ctx.guild.get_member(int(i)))
-                    role = ctx.guild.get_role(int(nom.for_role))
-                    temp += "\n"+ '@' + nom.whois.display_name + ' - ' + role.name
+                    role_list = []
+                    for role_id in nom.for_role: role_list.append(ctx.guild.get_role(int(role_id)))
+                    list_names = ""
+                    for wxz in role_list:
+                        list_names+=" "+wxz.name
+                    temp += "\n"+ '@' + nom.whois.display_name + ' - ' + list_names
+                    print(temp)
+            embed=discord.Embed(title="Election ballots")
+            if temp == "":
+                temp = "N/A"
             embed.add_field(name="Nominations", value=temp)
-            print(message.content)
             await message.edit(embed=embed)
-    else:
-        await ctx.send("User was already nominated")
-
-
+        else:
+            await ctx.send("User was already nominated")
 
 
 '''@client.command()
 async def help(ctx):
     pages = Pages(ctx, entries=help_list, per_page=6, custom_title="p!help")'''
 
-'''@client.event
+@client.event
 async def on_command_error(ctx, error):
     discord_error = discord.ext.commands.errors
     isinstance_dict = {
@@ -281,7 +316,7 @@ async def on_command_error(ctx, error):
     for key in isinstance_dict.keys():
         if isinstance(error, key):
             await ctx.send(isinstance_dict[key])
-        print(error)'''
+        print(error)
 
 
 client.run(config.token)
