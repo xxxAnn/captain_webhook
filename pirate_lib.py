@@ -125,7 +125,7 @@ def get_nominee(ctx, user_id: str, user_object):
 
 
 def add_nominee(nominee_id: str, role_id: str):
-    temp_dict = {"nominee_role_id": role_id,
+    temp_dict = {"nominee_role_id": [role_id],
                  "votes": [
                  ]}
     x = read_file("elections.Json")
