@@ -11,6 +11,7 @@ class bot_config:
         self.prefix = prefix
         self.logs = log_channel
         self.token = token
+        self.guild = None
         self.admins = admins
         self.moderators = moderator_list
         self.default_topic_message = default_topic

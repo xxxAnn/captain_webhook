@@ -8,6 +8,7 @@ import functools
 from wiktionaryparser import WiktionaryParser
 import PyDictionary
 import random
+from discord.ext import tasks
 from paginator import Pages
 from pirate_lib import get_topic
 from pirate_lib import write_file
@@ -31,26 +32,47 @@ last_topic = -1
 # client.remove_command(help)
 list_numbers_banned = []
 
+
 @client.event
 async def on_ready():
     print('Logged in as')
     print(client.user.name)
     print(client.user.id)
     print('------')
+    config.guild = client.get_guild(700665943835148330)
     list = [704019374780055643, 704019374310424808]
-    # for i in list: await client.get_channel(i).delete()
+    award_vc_points.start()
 
+
+@tasks.loop(seconds=300)
+async def award_vc_points():
+    for member in config.guild.members:
+        if member.voice is not None:
+            if str(member.id) not in read_file("user_data.Json"):
+                write_file('user_data.Json', {'voice_points': 0, 'text_points': 0, 'cooldown': time.time()},
+                           str(member.id))
+            else:
+                user_data = read_file('user_data.Json')[str(member.id)]
+                user_data['voice_points'] += 5
+                write_file('user_data.Json', user_data, str(member.id))
 
 
 @client.event
 async def on_message(message):
+    if str(message.author.id) not in read_file("user_data.Json"):
+        write_file('user_data.Json', {'voice_points': 0, 'text_points': 0, 'cooldown': time.time()}, str(message.author.id))
+    user_data = read_file('user_data.Json')[str(message.author.id)]
+    if time.time() - user_data['cooldown'] > 5:
+        user_data['cooldown'] = time.time()
+        user_data['text_points']+=1
+        write_file('user_data.Json', user_data, str(message.author.id))
+        if message.channel.id == 701922472538144778 and str.lower(message.content).startswith("suggestion:"):
+            write_file("suggestions.Json", message.content)
+            await message.channel.send("Suggestion saved.")
+            channel = client.get_channel(703480588430082110)
+            text = message.content.replace("Suggestion: ", "", 1)
+            await channel.send("**Suggestion: **" + text.replace("suggestion: ", "", 1) + "\n")
     await client.process_commands(message)
-    if message.channel.id == 701922472538144778 and str.lower(message.content).startswith("suggestion:"):
-        write_file("suggestions.Json", message.content)
-        await message.channel.send("Suggestion saved.")
-        channel = client.get_channel(703480588430082110)
-        text = message.content.replace("Suggestion: ", "", 1)
-        await channel.send("**Suggestion: **" + text.replace("suggestion: ", "", 1) + "\n")
 
 
 @client.event
