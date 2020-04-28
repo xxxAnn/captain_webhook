@@ -129,14 +129,14 @@ async def leaderboard(ctx):
     sorted_list = sorted(points_dict.items(), key=operator.itemgetter(1))
     sorted_list = list(reversed(sorted_list))
     del sorted_list[10:]
-    print(sorted_list)
     string = "```pl\n"
     x=1
     for element in sorted_list:
         txt = element[0]
         usa = client.get_user(int(txt))
+        if usa.display_name is None:
+            break
         val = element[1]
-        print(val)
         val = f'{val:,}'.format(val=val)
         string = string + "{" + str(x + 1) + "}     #" + usa.display_name + "\n        Points : [" + str(
             val) + "] " + "\n"
