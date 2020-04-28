@@ -134,7 +134,7 @@ async def leaderboard(ctx):
     for element in sorted_list:
         txt = element[0]
         usa = client.get_user(int(txt))
-        if usa.display_name is None:
+        if usa is None:
             break
         val = element[1]
         val = f'{val:,}'.format(val=val)
