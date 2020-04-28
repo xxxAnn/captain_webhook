@@ -63,9 +63,9 @@ async def on_message(message):
     if str(message.author.id) not in read_file("user_data.Json"):
         write_file('user_data.Json', {'voice_points': 0, 'text_points': 0, 'cooldown': time.time()}, str(message.author.id))
     user_data = read_file('user_data.Json')[str(message.author.id)]
-    if time.time() - user_data['cooldown'] > 5:
+    if time.time() - user_data['cooldown'] > 12:
         user_data['cooldown'] = time.time()
-        user_data['text_points']+=1
+        user_data['text_points'] += 1
         write_file('user_data.Json', user_data, str(message.author.id))
         if message.channel.id == 701922472538144778 and str.lower(message.content).startswith("suggestion:"):
             write_file("suggestions.Json", message.content)
