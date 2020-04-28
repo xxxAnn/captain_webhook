@@ -11,6 +11,7 @@ import random
 from discord.ext import tasks
 from paginator import Pages
 from pirate_lib import get_topic
+import operator
 from pirate_lib import write_file
 from pirate_lib import pull_flag
 from pirate_lib import read_file
@@ -116,6 +117,32 @@ async def on_voice_state_update(member, before, after):
                 text_channel = client.get_channel(to_delete_list[str(channel.id)])
                 if not member.guild.get_role(700732374471934053) in member.roles:
                     await text_channel.set_permissions(member, read_messages=False)
+
+
+@client.command(aliases=['lb'])
+async def leaderboard(ctx):
+    temp_dict = read_file('user_data.Json')
+    points_dict = {}
+    for i in temp_dict.keys():
+        if "voice_points" in temp_dict[i]:
+            points_dict[i] = temp_dict[i]["voice_points"]+temp_dict[i]["text_points"]
+    sorted_list = sorted(points_dict.items(), key=operator.itemgetter(1))
+    sorted_list = list(reversed(sorted_list))
+    del sorted_list[10:]
+    print(sorted_list)
+    string = "```pl\n"
+    x=1
+    for element in sorted_list:
+        txt = element[0]
+        usa = client.get_user(int(txt))
+        val = element[1]
+        print(val)
+        val = f'{val:,}'.format(val=val)
+        string = string + "{" + str(x + 1) + "}     #" + usa.display_name + "\n        Points : [" + str(
+            val) + "] " + "\n"
+        x+=1
+    string = string + '```'
+    await ctx.send(string)
 
 
 @client.command()
