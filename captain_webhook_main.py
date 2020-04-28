@@ -130,7 +130,7 @@ async def leaderboard(ctx):
     sorted_list = list(reversed(sorted_list))
     del sorted_list[10:]
     string = "```pl\n"
-    x=1
+    x=0
     for element in sorted_list:
         txt = element[0]
         usa = client.get_user(int(txt))
