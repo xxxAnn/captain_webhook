@@ -24,11 +24,11 @@ class VoiceCog(commands.Cog):
                     channel_number = random.randint(1111, 9999)
                 self.list_numbers_banned.append(channel_number)
                 channel = await guild.create_voice_channel(name="Private group {0}".format(channel_number), user_limit=2, category=category) # create channel
-                # role = guild.get_role(700732374471934053)
+                role = guild.get_role(700732374471934053)
                 overwrite = {
                     guild.default_role: discord.PermissionOverwrite(read_messages=False),
                     member: discord.PermissionOverwrite(read_messages=True),
-                    # role: discord.PermissionOverwrite(read_messages=True),
+                    role: discord.PermissionOverwrite(read_messages=True),
                     self.bot.user: discord.PermissionOverwrite(manage_permissions=True, read_messages=True, manage_channels=True)
                 }
                 text_channel = await guild.create_text_channel(name="private-group-{0}".format(channel_number), category=category, position=0, overwrites=overwrite)
