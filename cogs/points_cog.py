@@ -1,7 +1,9 @@
 import discord
 from discord.ext import commands
 from Libraries.pirate_lib import write_file, read_file
+import operator
 import time
+import datetime
 
 
 class PointCog(commands.Cog):
@@ -9,7 +11,7 @@ class PointCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(aliases=['lb'])
+    @commands.command(aliases=['lb', 'top'])
     async def leaderboard(self, ctx):
         temp_dict = read_file('data/user_data.Json')
         points_dict = {}
