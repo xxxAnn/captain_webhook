@@ -12,7 +12,7 @@ class PointCog(commands.Cog):
         self.bot = bot
 
     @commands.command(aliases=['lb', 'top'])
-    async def leaderboard(self, ctx):
+    async def leaderboard(self, ctx, amount:int=10):
         temp_dict = read_file('data/user_data.Json')
         points_dict = {}
         for i in temp_dict.keys():
@@ -20,7 +20,7 @@ class PointCog(commands.Cog):
                 points_dict[i] = temp_dict[i]["voice_points"]+temp_dict[i]["text_points"]
         sorted_list = sorted(points_dict.items(), key=operator.itemgetter(1))
         sorted_list = list(reversed(sorted_list))
-        del sorted_list[10:]
+        del sorted_list[amount:]
         string = "```pl\n"
         x=0
         for element in sorted_list:

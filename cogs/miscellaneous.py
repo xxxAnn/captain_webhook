@@ -62,6 +62,21 @@ class Miscellaneous(commands.Cog):
     async def languagedifficulty(self, ctx):
         await ctx.send("How hard a language is depends mostly on the languages you already know and your motivation to learn said language")
 
+    @commands.command()
+    async def tag(self, ctx,  *, arg):
+        if ctx.author.id in admin_list:
+            arg = arg.split('|')
+            arg[0] = str.lower(arg[0])
+            write_file('data/tags.Json', arg[1], arg[0])
+            await ctx.send("Successfully added tag")
+        else:
+            await ctx.send("You do that silly")
+
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        if str.lower(message.content) in read_file('data/tags.Json'):
+            await message.channel.send(str(read_file('data/tags.Json')[str.lower(message.content)]))
+
 
 def setup(bot):
     bot.add_cog(Miscellaneous(bot))
