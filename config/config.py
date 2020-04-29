@@ -11,6 +11,12 @@ log_channel = 702588387390914651
 
 
 class bot_config:
+    __instance = None
+    @staticmethod
+    def getInstance():
+        if bot_config.__instance == None:
+            bot_config(token= token_const, prefix=prefix_var, admins=admin_list, default_topic=topic_message)
+        return bot_config.__instance
     def __init__(self, token, prefix, admins, default_topic):
         self.prefix = prefix
         self.logs = log_channel
@@ -20,7 +26,8 @@ class bot_config:
         self.moderators = moderator_list
         self.default_topic_message = default_topic
         self.client = Bot(command_prefix=self.prefix, case_insensitive=True)
+        bot_config.__instance = self
         
         
 def get_config():
-    return bot_config(token= token_const, prefix=prefix_var, admins=admin_list, default_topic=topic_message)
+    return bot_config.getInstance()
