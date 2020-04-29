@@ -5,6 +5,7 @@ import operator
 import time
 import datetime
 
+
 class PointCog(commands.Cog):
 
     def __init__(self, bot):
