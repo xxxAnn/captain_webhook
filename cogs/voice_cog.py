@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 import random
+import functools
 from Libraries.pirate_lib import write_file, read_file
 
 
