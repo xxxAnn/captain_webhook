@@ -35,7 +35,7 @@ class Moderation(commands.Cog):
                                 value="{0}".format(arg))
                 embed.add_field(name="Channel".format(user.display_name),
                                 value="{0}".format(ctx.channel))
-                # await ctx.guild.get_channel(log_channel).send(embed=embed)
+                await ctx.guild.get_channel(log_channel).send(embed=embed)
             else:
                 await ctx.send("Missing required argument")
         else:
