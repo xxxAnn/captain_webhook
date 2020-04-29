@@ -58,5 +58,10 @@ class Miscellaneous(commands.Cog):
         pages = Pages(ctx, entries=definition, per_page=4, custom_title="Definition of " + original_word)
         await pages.paginate()
 
+    @commands.command(aliases=["langdiff", "langdifficulty", "lh", "ld"])
+    async def languagedifficulty(self, ctx):
+        await ctx.send("How hard a language is depends mostly on the languages you already know and your motivation to learn said language")
+
+
 def setup(bot):
     bot.add_cog(Miscellaneous(bot))
