@@ -15,9 +15,9 @@ class VoiceCog(commands.Cog):
     async def on_voice_state_update(self, member, before, after):
         channel = after.channel
         if channel is not None:
-            if channel.id == 702011129349668979: # 702169810028724297
+            if channel.id == 702169810028724297: # 702169810028724297
                 guild = member.guild
-                category = self.bot.get_channel(702011129349668977) # 700665944279875654
+                category = self.bot.get_channel(700665944279875654) # 700665944279875654
                 channel_number = random.randint(1111, 9999)
                 while channel_number in self.list_numbers_banned:
                     channel_number = random.randint(1111, 9999)
