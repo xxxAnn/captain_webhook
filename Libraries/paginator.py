@@ -232,7 +232,7 @@ class Pages:
 
         while self.paginating:
             try:
-                payload = await self.bot.wait_for('raw_reaction_add', check=self.react_check, timeout=120.0)
+                payload = await self.bot.wait_for('raw_reaction_add', check=self.react_check, timeout=30.0)
             except asyncio.TimeoutError:
                 self.paginating = False
                 try:
