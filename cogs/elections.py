@@ -3,6 +3,7 @@ import discord
 from Libraries.pirate_lib import read_file, write_file, add_nominee, get_nominee, update_nominations
 import json
 
+
 class ElectionCog(commands.Cog):
 
     def __init__(self, bot):
