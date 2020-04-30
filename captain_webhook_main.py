@@ -57,7 +57,7 @@ async def award_vc_points():
             if str(member.id) not in read_file("user_data.Json"):
                 write_file('data/user_data.Json', {'voice_points': 0, 'text_points': 0, 'cooldown': time.time()},
                            str(member.id))
-            else:
+            elif member.voice.mute is False and member.voice.self_mute is False:
                 user_data = read_file('user_data.Json')[str(member.id)]
                 user_data['voice_points'] += 5
                 write_file('user_data.Json', user_data, str(member.id))
