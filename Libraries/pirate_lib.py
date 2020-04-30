@@ -132,3 +132,23 @@ def add_nominee(nominee_id: str, role_id: str):
     x[nominee_id] = temp_dict
     with open("data/elections.Json", 'w') as file_output_object:
         json.dump(x, file_output_object, indent=4)
+
+
+async def update_nominations(ctx, message):
+    x = read_file('data/elections.Json')
+    temp = ""
+    for i in x.keys():
+        embed = discord.Embed(title="Election ballots")
+        if i != "message":
+            nom = get_nominee(ctx, i, ctx.guild.get_member(int(i)))
+            role_list = []
+            for role_id in nom.for_role: role_list.append(ctx.guild.get_role(int(role_id)))
+            list_names = ""
+            for wxz in role_list:
+                list_names += wxz.name + " "
+            temp += '@' + nom.whois.display_name + ' - ' + " " + list_names + "\n"
+    if temp == "":
+        temp = "N/A"
+    embed.add_field(name="Nominations", value=temp)
+    await message.edit(message="", embed=embed)
+    await ctx.send("Succesfully nominated user")
