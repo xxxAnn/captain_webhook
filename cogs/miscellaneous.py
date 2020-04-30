@@ -78,7 +78,7 @@ class Miscellaneous(commands.Cog):
         help_logs_channel = self.bot.get_channel(700731099705508010)
         if message.channel.id == help_channel_id:
             content = message.content
-            await help_logs_channel.send("Help request from "+ message.author.name + ": \n"+content + "\n||@here||")
+            await help_logs_channel.send("Help request from "+ message.author.mention + ": \n"+content + "\n||@here||")
             await message.delete()
         elif str.lower(message.content) in read_file('data/tags.Json'):
             await message.channel.send(str(read_file('data/tags.Json')[str.lower(message.content)]))
