@@ -74,7 +74,13 @@ class Miscellaneous(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        if str.lower(message.content) in read_file('data/tags.Json'):
+        help_channel_id = '700754951558660106'
+        help_logs_channel = self.bot.get_channel('700731099705508010')
+        if message.channel.id == help_channel_id:
+            content = message.content
+            await help_logs_channel.send("Help request from "+ message.author.name + ": \n"+content)
+            await message.delete()
+        elif str.lower(message.content) in read_file('data/tags.Json'):
             await message.channel.send(str(read_file('data/tags.Json')[str.lower(message.content)]))
 
 
