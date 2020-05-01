@@ -5,6 +5,8 @@ from Libraries.pirate_lib import read_file, write_file, append_topic, get_topic
 from config.config import admin_list
 from wiktionaryparser import WiktionaryParser
 from Libraries.paginator import Pages
+from textblob import TextBlob
+import json
 parser = WiktionaryParser()
 
 
@@ -82,6 +84,37 @@ class Miscellaneous(commands.Cog):
             await message.delete()
         elif str.lower(message.content) in read_file('data/tags.Json'):
             await message.channel.send(str(read_file('data/tags.Json')[str.lower(message.content)]))
+        if len(message.content)>3:
+            lang = TextBlob(message.content)
+            language = lang.detect_language()
+            if language:
+                if language not in read_file('data/languages.Json'):
+                    write_file('data/languages.Json', 1, language)
+                else:
+                    x = read_file('data/languages.Json')
+                    x[language]+=1
+                    with open("data/languages.Json", 'w') as file_output_object:
+                        json.dump(x, file_output_object, sort_keys=True, indent=4, separators=(',', ': '),
+                                  skipkeys=True)
+
+    @commands.command(aliases=['tl'])
+    async def toplanguage(self, ctx):
+        x = read_file('data/languages.Json')
+        temp = ""
+        diksho = {
+            "tr": "Turkish",
+            "en": "English",
+            "fr": "French",
+            "zh": "Chinese",
+            "ja": "Japanese"
+        }
+        for i in x.keys():
+            if i in diksho:
+                text = diksho[i]
+            else:
+                text = i
+            temp+=text+": "+str(x[i]) + "\n"
+        await ctx.send(temp)
 
 
 def setup(bot):
