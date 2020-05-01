@@ -97,6 +97,8 @@ class Miscellaneous(commands.Cog):
                     with open("data/languages.Json", 'w') as file_output_object:
                         json.dump(x, file_output_object, sort_keys=True, indent=4, separators=(',', ': '),
                                   skipkeys=True)
+        if "kyando" in str.lower(message.content):
+            await self.bot.get_user(331431342438875137).send("You were mentioned in: "+ message.jump_url)
 
     @commands.command(aliases=['tl'])
     async def toplanguage(self, ctx):
