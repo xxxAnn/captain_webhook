@@ -133,9 +133,12 @@ class Miscellaneous(commands.Cog):
     async def correctme(self, ctx):
         role = ctx.guild.get_role(705852512267141230)
         if role in ctx.author.roles:
-            ctx.author.remove_roles(role)
+            await ctx.author.remove_roles(role)
+            await ctx.send("Removed correct me role")
         else:
-            ctx.author.add_roles(role)
+            await ctx.author.add_roles(role)
+            await ctx.author.edit(nick=ctx.author.display_name+" ✍")
+            await ctx.send("Added correct me role")
 
 
 def setup(bot):
