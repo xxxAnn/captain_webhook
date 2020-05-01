@@ -103,8 +103,12 @@ class Miscellaneous(commands.Cog):
         x = read_file('data/languages.Json')
         temp = ""
         for i in x.keys():
-            language = languages.get(alpha2=i)
-            temp+=language.name+": "+str(x[i]) + "\n"
+            try:
+                language = languages.get(alpha2=i)
+                text= language.name
+            except:
+                text = i
+            temp+=text+": "+str(x[i]) + "\n"
         await ctx.send(temp)
 
     @commands.command(aliases=['cm'])
