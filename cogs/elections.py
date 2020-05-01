@@ -22,7 +22,7 @@ class ElectionCog(commands.Cog):
                 with open("data/elections.Json", 'w') as file_output_object:
                     json.dump(wx, file_output_object, sort_keys=True, indent=4, separators=(',', ': '))
             if read_file("data/elections.Json")["message"] is False:
-                message = await channel.send("You should not be seeing this")
+                message = await channel.send("_ _")
                 x = read_file('data/elections.Json')
                 x["message"] = message.id
                 with open("data/elections.Json", 'w') as file_output_object:

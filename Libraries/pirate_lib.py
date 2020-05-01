@@ -150,5 +150,5 @@ async def update_nominations(ctx, message):
     if temp == "":
         temp = "N/A"
     embed.add_field(name="Nominations", value=temp)
-    await message.edit(message="", embed=embed)
+    await message.edit(message="_ _", embed=embed)
     await ctx.send("Succesfully nominated user")
