@@ -106,7 +106,13 @@ class Miscellaneous(commands.Cog):
             "en": "English",
             "fr": "French",
             "zh": "Chinese",
-            "ja": "Japanese"
+            "ja": "Japanese",
+            "de": "German",
+            "ar": "Arabic",
+            "af": "Afrikaans",
+            "es": "Spanish",
+            "ur": "Urdu",
+            "ro": "Romanian"
         }
         for i in x.keys():
             if i in diksho:
