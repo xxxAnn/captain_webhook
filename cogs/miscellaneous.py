@@ -7,6 +7,7 @@ from wiktionaryparser import WiktionaryParser
 from Libraries.paginator import Pages
 from textblob import TextBlob
 import json
+import time
 from iso639 import languages
 parser = WiktionaryParser()
 
