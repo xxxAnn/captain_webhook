@@ -7,6 +7,7 @@ from wiktionaryparser import WiktionaryParser
 from Libraries.paginator import Pages
 from textblob import TextBlob
 import json
+from iso639 import languages
 parser = WiktionaryParser()
 
 
@@ -101,32 +102,9 @@ class Miscellaneous(commands.Cog):
     async def toplanguage(self, ctx):
         x = read_file('data/languages.Json')
         temp = ""
-        diksho = {
-            "tr": "Turkish",
-            "en": "English",
-            "fr": "French",
-            "zh": "Chinese",
-            "ja": "Japanese",
-            "de": "German",
-            "ar": "Arabic",
-            "af": "Afrikaans",
-            "es": "Spanish",
-            "ur": "Urdu",
-            "ro": "Romanian",
-            "ca": "Catalan",
-            "da": "Danish",
-            "hi": "Hindi",
-            "mi": "Maori",
-            "pl": "Polish",
-            "su": "Sundanese",
-            "id": "Indonesian"
-        }
         for i in x.keys():
-            if i in diksho:
-                text = diksho[i]
-            else:
-                text = i
-            temp+=text+": "+str(x[i]) + "\n"
+            language = languages.get(alpha2=i)
+            temp+=language.name+": "+str(x[i]) + "\n"
         await ctx.send(temp)
 
     @commands.command(aliases=['cm'])
