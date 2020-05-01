@@ -112,7 +112,13 @@ class Miscellaneous(commands.Cog):
             "af": "Afrikaans",
             "es": "Spanish",
             "ur": "Urdu",
-            "ro": "Romanian"
+            "ro": "Romanian",
+            "ca": "Catalan",
+            "da": "Danish",
+            "hi": "Hindi",
+            "mi": "Maori",
+            "pl": "Polish",
+            "su": "Sundanese"
         }
         for i in x.keys():
             if i in diksho:
