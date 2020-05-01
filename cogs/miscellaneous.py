@@ -118,7 +118,8 @@ class Miscellaneous(commands.Cog):
             "hi": "Hindi",
             "mi": "Maori",
             "pl": "Polish",
-            "su": "Sundanese"
+            "su": "Sundanese",
+            "id": "Indonesian"
         }
         for i in x.keys():
             if i in diksho:
@@ -127,6 +128,14 @@ class Miscellaneous(commands.Cog):
                 text = i
             temp+=text+": "+str(x[i]) + "\n"
         await ctx.send(temp)
+
+    @commands.command(aliases=['cm'])
+    async def correctme(self, ctx):
+        role = ctx.guild.get_role(705852512267141230)
+        if role in ctx.author.roles:
+            ctx.author.remove_roles(role)
+        else:
+            ctx.author.add_roles(role)
 
 
 def setup(bot):
