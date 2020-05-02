@@ -7,6 +7,7 @@ from wiktionaryparser import WiktionaryParser
 from Libraries.paginator import Pages
 from textblob import TextBlob
 import json
+import time
 from iso639 import languages
 parser = WiktionaryParser()
 
@@ -124,6 +125,22 @@ class Miscellaneous(commands.Cog):
             await ctx.author.edit(nick=ctx.author.display_name+" ✍")
             await ctx.send("Added correct me role")
 
+    @commands.command(aliases=['sp'])
+    async def startprelim(self, ctx):
+        if ctx.author.id in admin_list:
+            channel = self.bot.get_channel(703467261176053811)
+            for i in read_file('data/suggestions.Json'):
+                embed = discord.Embed(title="Vote")
+                if len(i)> 200:
+                    message = await channel.send(i + "\n Suggestion was too long for embed")
+                else:
+                    embed.add_field(name=i, value="React with 👍 or 👎")
+                    embed.set_thumbnail(
+                        url="https://media.discordapp.net/attachments/700731399019167827/704371197483286679/banner.png")
+                    message = await channel.send(embed=embed)
+                await message.add_reaction("<:voteaye:701929407647842374>")
+                await message.add_reaction("<:votenay:701929705074589696>")
+                time.sleep(.3)
 
 def setup(bot):
     bot.add_cog(Miscellaneous(bot))
