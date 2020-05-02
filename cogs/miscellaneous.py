@@ -8,6 +8,7 @@ from Libraries.paginator import Pages
 from textblob import TextBlob
 import json
 import time
+import operator
 from iso639 import languages
 parser = WiktionaryParser()
 
@@ -102,16 +103,19 @@ class Miscellaneous(commands.Cog):
             await self.bot.get_user(331431342438875137).send("You were mentioned in: "+ message.jump_url)
 
     @commands.command(aliases=['tl'])
-    async def toplanguage(self, ctx):
+    async def toplanguage(self, ctx, amount:int=10):
         x = read_file('data/languages.Json')
         temp = ""
-        for i in x.keys():
+        sorted_list = sorted(x.items(), key=operator.itemgetter(1))
+        sorted_list = list(reversed(sorted_list))
+        del sorted_list[amount:]
+        for i in sorted_list:
             try:
-                language = languages.get(alpha2=i)
-                text= language.name
+                language = languages.get(alpha2=i[0])
+                text = language.name
             except:
-                text = i
-            temp+=text+": "+str(x[i]) + "\n"
+                text = i[0]
+            temp+=text+": "+str(i[1]) + "\n"
         await ctx.send(temp)
 
     @commands.command(aliases=['cm'])
