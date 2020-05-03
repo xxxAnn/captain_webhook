@@ -127,7 +127,7 @@ class Miscellaneous(commands.Cog):
 
     async def handle_suggestion(self, message):
         if message.channel.id == SUGGESTIONS_CHANNEL and str.lower(message.content).startswith("suggestion: "):
-            write_file("data/suggestions.Json", message.content)
+            write_file("data/suggestions.Json", { "suggestion": message.content[len("suggestion: "):], "jump_url": message.jump_url })
             await message.channel.send("Suggestion saved.")
             channel = self.bot.get_channel(IDK_THIS_CHANNEL)
             text = message.content.replace("Suggestion: ", "", 1)
@@ -164,8 +164,9 @@ class Miscellaneous(commands.Cog):
     async def startprelim(self, ctx):
         if ctx.author.id in admin_list:
             channel = self.bot.get_channel(PRELIM_VOTING_CHANNEL)
+            #TODO Add jump links to suggestions messages
             for i in read_file('data/suggestions.Json'):
-                await self.post_suggestion(channel, i)
+                await self.post_suggestion(channel, i['suggestion'], i['jump_url'])
                 time.sleep(.3)
 
     @commands.command(aliases=['ptv'])
@@ -174,6 +175,7 @@ class Miscellaneous(commands.Cog):
             prelim_voting_channel = self.bot.get_channel(PRELIM_VOTING_CHANNEL)
             voting_channel = self.bot.get_channel(VOTING_CHANNEL)
             bot_messages = await prelim_voting_channel.history().filter(lambda member: member.author.id == self.bot.user.id).flatten()
+            bot_messages.reverse()
 
             for message in bot_messages:
                 num_upvotes = 0
@@ -184,22 +186,38 @@ class Miscellaneous(commands.Cog):
                         num_upvotes = num_upvotes + reaction[1]
                     elif reaction[0] == DOWNVOTE_ID:
                         num_downvotes = num_downvotes + reaction[1]
-
+                
                 if num_upvotes > num_downvotes:
-                    await self.post_suggestion(voting_channel, message.embeds[0].fields[0].name)
+                    # only needed for now while we still don't have embeds for lengthy messages
+                    if len(message.content) != 0:
+                        await self.post_suggestion(voting_channel, message.content[:message.content.rindex("\n Suggestion was too long for embed")])
+                    else:
+                        # Commented for later when all suggestions are embedded in the new format
+                        # message.embeds[0].fields[0].value, message.embeds[0].fields[1].value
 
-    async def post_suggestion(self, channel, suggestion):
+                        # extract suggestion and jump_url from previous embed
+                        await self.post_suggestion(voting_channel, message.embeds[0].fields[0].name)
+                
+
+    async def post_suggestion(self, channel, suggestion, jump_url = "N/A"):
         embed = discord.Embed(title="Vote")
-        if len(suggestion)> 200:
-            message = await channel.send(suggestion + "\n Suggestion was too long for embed")
-        else:
-            embed.add_field(name=suggestion, value="React with 👍 or 👎")
-            embed.set_thumbnail(
-                url="https://media.discordapp.net/attachments/700731399019167827/704371197483286679/banner.png")
-            message = await channel.send(embed=embed)
+        embed.add_field(name="Suggestion", value=suggestion[:len(suggestion) if len(suggestion) <= 1024 else 1024], inline=False)
+        embed.add_field(name="More Info", value=jump_url, inline=False)
+        embed.set_thumbnail(url="https://media.discordapp.net/attachments/700731399019167827/704371197483286679/banner.png")
+
+        message = await channel.send(embed=embed)
         await message.add_reaction(UPVOTE_EMOJI)
         await message.add_reaction(DOWNVOTE_EMOJI)
 
+    @commands.command()
+    async def jsonify(self, ctx):
+        if ctx.author.id in admin_list:
+            json_list = []
+            for suggestion in read_file('data/suggestions.Json'):
+                json_list.append({ "suggestion": suggestion, "jump_url": "N/A" })
 
+            with open('data/suggestions.Json', 'w') as file_output_object:
+                json.dump(json_list, file_output_object, sort_keys=True, indent=4, separators=(',', ': '), skipkeys=True)
+        
 def setup(bot):
     bot.add_cog(Miscellaneous(bot))
