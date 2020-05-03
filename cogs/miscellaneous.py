@@ -7,6 +7,8 @@ from wiktionaryparser import WiktionaryParser
 from Libraries.paginator import Pages
 from textblob import TextBlob
 import json
+import time
+import operator
 from iso639 import languages
 parser = WiktionaryParser()
 
@@ -101,16 +103,19 @@ class Miscellaneous(commands.Cog):
             await self.bot.get_user(331431342438875137).send("You were mentioned in: "+ message.jump_url)
 
     @commands.command(aliases=['tl'])
-    async def toplanguage(self, ctx):
+    async def toplanguage(self, ctx, amount:int=10):
         x = read_file('data/languages.Json')
         temp = ""
-        for i in x.keys():
+        sorted_list = sorted(x.items(), key=operator.itemgetter(1))
+        sorted_list = list(reversed(sorted_list))
+        del sorted_list[amount:]
+        for i in sorted_list:
             try:
-                language = languages.get(alpha2=i)
-                text= language.name
+                language = languages.get(alpha2=i[0])
+                text = language.name
             except:
-                text = i
-            temp+=text+": "+str(x[i]) + "\n"
+                text = i[0]
+            temp+=text+": "+str(i[1]) + "\n"
         await ctx.send(temp)
 
     @commands.command(aliases=['cm'])
@@ -124,10 +129,10 @@ class Miscellaneous(commands.Cog):
             await ctx.author.edit(nick=ctx.author.display_name+" ✍")
             await ctx.send("Added correct me role")
 
-    '''@commands.command(aliases=['sp'])
+    @commands.command(aliases=['sp'])
     async def startprelim(self, ctx):
         if ctx.author.id in admin_list:
-            channel = self.bot.get_channel(705885566079860807)
+            channel = self.bot.get_channel(703467261176053811)
             for i in read_file('data/suggestions.Json'):
                 embed = discord.Embed(title="Vote")
                 if len(i)> 200:
@@ -137,9 +142,9 @@ class Miscellaneous(commands.Cog):
                     embed.set_thumbnail(
                         url="https://media.discordapp.net/attachments/700731399019167827/704371197483286679/banner.png")
                     message = await channel.send(embed=embed)
-                await message.add_reaction("👍")
-                await message.add_reaction("👎")
-                time.sleep(.3)'''
+                await message.add_reaction("<:voteaye:701929407647842374>")
+                await message.add_reaction("<:votenay:701929705074589696>")
+                time.sleep(.3)
 
 def setup(bot):
     bot.add_cog(Miscellaneous(bot))
