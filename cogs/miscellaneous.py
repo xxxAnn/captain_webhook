@@ -12,6 +12,17 @@ import operator
 from iso639 import languages
 parser = WiktionaryParser()
 
+SUGGESTIONS_CHANNEL = 701922472538144778
+IDK_THIS_CHANNEL = 703480588430082110
+HELP_CHANNEL = 700754951558660106
+HELP_LOGS_CHANNEL = 700731099705508010
+PRELIM_VOTING_CHANNEL = 703467261176053811
+VOTING_CHANNEL = 703467201683914822
+
+UPVOTE_EMOJI = "<:voteaye:701929407647842374>"
+UPVOTE_ID = 701929407647842374
+DOWNVOTE_EMOJI = "<:votenay:701929705074589696>" 
+DOWNVOTE_ID = 701929705074589696
 
 class Miscellaneous(commands.Cog):
 
@@ -79,14 +90,24 @@ class Miscellaneous(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        help_channel_id = 700754951558660106
-        help_logs_channel = self.bot.get_channel(700731099705508010)
-        if message.channel.id == help_channel_id:
+        await self.handle_help(message)
+        await self.handle_tags(message)
+        await self.handle_language(message)
+        await self.handle_kyando(message)
+        await self.handle_suggestion(message)
+
+    async def handle_help(self, message):
+        help_logs_channel = self.bot.get_channel(HELP_LOGS_CHANNEL)
+        if message.channel.id == HELP_CHANNEL:
             content = message.content
             await help_logs_channel.send("Help request from "+ message.author.mention + ": \n"+content + "\n||@here||")
             await message.delete()
-        elif str.lower(message.content) in read_file('data/tags.Json'):
+
+    async def handle_tags(self, message):
+        if str.lower(message.content) in read_file('data/tags.Json'):
             await message.channel.send(str(read_file('data/tags.Json')[str.lower(message.content)]))
+
+    async def handle_language(self, message):
         if len(message.content)>3:
             lang = TextBlob(message.content)
             language = lang.detect_language()
@@ -99,8 +120,18 @@ class Miscellaneous(commands.Cog):
                     with open("data/languages.Json", 'w') as file_output_object:
                         json.dump(x, file_output_object, sort_keys=True, indent=4, separators=(',', ': '),
                                   skipkeys=True)
+
+    async def handle_kyando(self, message):
         if "kyando" in str.lower(message.content):
             await self.bot.get_user(331431342438875137).send("You were mentioned in: "+ message.jump_url)
+
+    async def handle_suggestion(self, message):
+        if message.channel.id == SUGGESTIONS_CHANNEL and str.lower(message.content).startswith("suggestion: "):
+            write_file("data/suggestions.Json", message.content)
+            await message.channel.send("Suggestion saved.")
+            channel = self.bot.get_channel(IDK_THIS_CHANNEL)
+            text = message.content.replace("Suggestion: ", "", 1)
+            await channel.send("**Suggestion: **" + text.replace("suggestion: ", "", 1) + "\n")
 
     @commands.command(aliases=['tl'])
     async def toplanguage(self, ctx, amount:int=10):
@@ -132,19 +163,43 @@ class Miscellaneous(commands.Cog):
     @commands.command(aliases=['sp'])
     async def startprelim(self, ctx):
         if ctx.author.id in admin_list:
-            channel = self.bot.get_channel(703467261176053811)
+            channel = self.bot.get_channel(PRELIM_VOTING_CHANNEL)
             for i in read_file('data/suggestions.Json'):
-                embed = discord.Embed(title="Vote")
-                if len(i)> 200:
-                    message = await channel.send(i + "\n Suggestion was too long for embed")
-                else:
-                    embed.add_field(name=i, value="React with 👍 or 👎")
-                    embed.set_thumbnail(
-                        url="https://media.discordapp.net/attachments/700731399019167827/704371197483286679/banner.png")
-                    message = await channel.send(embed=embed)
-                await message.add_reaction("<:voteaye:701929407647842374>")
-                await message.add_reaction("<:votenay:701929705074589696>")
+                await self.post_suggestion(channel, i)
                 time.sleep(.3)
+
+    @commands.command(aliases=['ptv'])
+    async def prelimtovote(self, ctx):
+        if ctx.author.id in admin_list:
+            prelim_voting_channel = self.bot.get_channel(PRELIM_VOTING_CHANNEL)
+            voting_channel = self.bot.get_channel(VOTING_CHANNEL)
+            bot_messages = await prelim_voting_channel.history().filter(lambda member: member.author.id == self.bot.user.id).flatten()
+
+            for message in bot_messages:
+                num_upvotes = 0
+                num_downvotes = 0
+
+                for reaction in map(lambda reaction: (reaction.emoji.id, reaction.count), message.reactions):
+                    if reaction[0] == UPVOTE_ID:
+                        num_upvotes = num_upvotes + reaction[1]
+                    elif reaction[0] == DOWNVOTE_ID:
+                        num_downvotes = num_downvotes + reaction[1]
+
+                if num_upvotes > num_downvotes:
+                    await self.post_suggestion(voting_channel, message.embeds[0].fields[0].name)
+
+    async def post_suggestion(self, channel, suggestion):
+        embed = discord.Embed(title="Vote")
+        if len(suggestion)> 200:
+            message = await channel.send(suggestion + "\n Suggestion was too long for embed")
+        else:
+            embed.add_field(name=suggestion, value="React with 👍 or 👎")
+            embed.set_thumbnail(
+                url="https://media.discordapp.net/attachments/700731399019167827/704371197483286679/banner.png")
+            message = await channel.send(embed=embed)
+        await message.add_reaction(UPVOTE_EMOJI)
+        await message.add_reaction(DOWNVOTE_EMOJI)
+
 
 def setup(bot):
     bot.add_cog(Miscellaneous(bot))

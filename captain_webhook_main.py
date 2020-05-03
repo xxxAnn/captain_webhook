@@ -16,6 +16,7 @@ import time
 import argparse
 import shlex
 import traceback
+
 parser = WiktionaryParser()
 epoch = time.time()
 config = get_config()
@@ -56,12 +57,6 @@ async def award_vc_points():
 
 @client.event
 async def on_message(message):
-    if message.channel.id == 701922472538144778 and str.lower(message.content).startswith("suggestion: "):
-        write_file("data/suggestions.Json", message.content)
-        await message.channel.send("Suggestion saved.")
-        channel = client.get_channel(703480588430082110)
-        text = message.content.replace("Suggestion: ", "", 1)
-        await channel.send("**Suggestion: **" + text.replace("suggestion: ", "", 1) + "\n")
     await client.process_commands(message)
 
 
@@ -80,6 +75,3 @@ async def on_command_error(ctx, error):
 
 
 client.run(config.token)
-
-
-
