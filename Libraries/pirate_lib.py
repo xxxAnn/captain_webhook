@@ -26,18 +26,14 @@ def get_topic():
 
 
 def append_topic(topic):
-    with open('data/topics.Json', 'r') as topic_file:
-        topic_list = json.load(topic_file)
-    topic_file.close()
+    topic_list = read_file('data/topics.Json')
     topic_list.append(topic)
     with open('data/topics.Json', 'w') as topic_file_output:
         json.dump(topic_list, topic_file_output)
 
 
 def write_file(filename, value, key=None):
-    with open(filename, 'r') as file_object:
-        file_content = json.load(file_object)
-    file_object.close()
+    file_content = read_file(filename)
     if isinstance(file_content, dict):
         file_content[key] = value
     elif isinstance(file_content, list):
@@ -49,10 +45,10 @@ def write_file(filename, value, key=None):
     with open(filename, 'w') as file_output_object:
         json.dump(file_content, file_output_object, sort_keys=True, indent=4, separators=(',', ': '), skipkeys=True)
 
-
+# Creates the file if it is not already there
 def read_file(filename):
     with open(filename, 'r') as file_object:
-        return json.load(file_object)
+        return json.loads(file_object.read() or '{}')
 
 
 def pull_flag(arg_list, flag_list):
@@ -89,7 +85,7 @@ def _resolve_member_id(ctx, input):
 class Nominee:
 
     def __init__(self, vote_list, nominated_for, ctx, user_id: int, user_object):
-        print(user_id)
+        (user_id)
         self.whois = user_object
         print(self.whois)
         self.key = str(user_id)

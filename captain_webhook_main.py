@@ -1,8 +1,6 @@
 # python 3.7
 import discord  # version 1.3.2
-from discord.ext.commands import Bot
-from discord.ext.commands import CommandNotFound
-from discord.ext.commands import has_permissions
+from discord.ext.commands import Bot, CommandNotFound, has_permissions
 import json
 import functools
 from wiktionaryparser import WiktionaryParser
@@ -12,19 +10,13 @@ from discord.ext import tasks
 from Libraries.paginator import Pages
 from Libraries.pirate_lib import get_topic
 import operator
-from Libraries.pirate_lib import write_file
-from Libraries.pirate_lib import pull_flag
-from Libraries.pirate_lib import read_file
-from Libraries.pirate_lib import get_nominee
-from Libraries.pirate_lib import add_nominee
-from Libraries.pirate_lib import append_topic
-from Libraries.pirate_lib import _resolve_member_id
-from Libraries.pirate_lib import pirate_error
+from Libraries.pirate_lib import write_file, pull_flag, read_file, get_nominee, add_nominee, append_topic, _resolve_member_id, pirate_error
 from config.config import get_config
 import time
 import argparse
 import shlex
 import traceback
+
 parser = WiktionaryParser()
 epoch = time.time()
 config = get_config()
@@ -65,12 +57,6 @@ async def award_vc_points():
 
 @client.event
 async def on_message(message):
-    if message.channel.id == 701922472538144778 and str.lower(message.content).startswith("suggestion: "):
-        write_file("data/suggestions.Json", message.content)
-        await message.channel.send("Suggestion saved.")
-        channel = client.get_channel(703480588430082110)
-        text = message.content.replace("Suggestion: ", "", 1)
-        await channel.send("**Suggestion: **" + text.replace("suggestion: ", "", 1) + "\n")
     await client.process_commands(message)
 
 
@@ -89,6 +75,3 @@ async def on_command_error(ctx, error):
 
 
 client.run(config.token)
-
-
-

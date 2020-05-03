@@ -38,13 +38,15 @@ class PointCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        if str(message.author.id) not in read_file("data/user_data.Json"):
-            write_file('data/user_data.Json', {'voice_points': 0, 'text_points': 0, 'cooldown': time.time()}, str(message.author.id))
-        user_data = read_file('data/user_data.Json')[str(message.author.id)]
-        if time.time() - user_data['cooldown'] > 12:
-            user_data['cooldown'] = time.time()
-            user_data['text_points'] += 1
-            write_file('data/user_data.Json', user_data, str(message.author.id))
+        user_data_json = read_file("data/user_data.Json")
+        if str(message.author.id) not in user_data_json:
+            write_file('data/user_data.Json', {'voice_points': 0, 'text_points': 1, 'cooldown': time.time()}, str(message.author.id))
+        else:
+            user_data = user_data_json[str(message.author.id)]
+            if time.time() - user_data['cooldown'] > 12:
+                user_data['cooldown'] = time.time()
+                user_data['text_points'] += 1
+                write_file('data/user_data.Json', user_data, str(message.author.id))
 
 
 def setup(bot):
