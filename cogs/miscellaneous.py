@@ -208,16 +208,6 @@ class Miscellaneous(commands.Cog):
         message = await channel.send(embed=embed)
         await message.add_reaction(UPVOTE_EMOJI)
         await message.add_reaction(DOWNVOTE_EMOJI)
-
-    @commands.command()
-    async def jsonify(self, ctx):
-        if ctx.author.id in admin_list:
-            json_list = []
-            for suggestion in read_file('data/suggestions.Json'):
-                json_list.append({ "suggestion": suggestion, "jump_url": "N/A" })
-
-            with open('data/suggestions.Json', 'w') as file_output_object:
-                json.dump(json_list, file_output_object, sort_keys=True, indent=4, separators=(',', ': '), skipkeys=True)
         
 def setup(bot):
     bot.add_cog(Miscellaneous(bot))
