@@ -85,32 +85,11 @@ def _resolve_member_id(ctx, input):
 class Nominee:
 
     def __init__(self, vote_list, nominated_for, ctx, user_id: int, user_object):
-        (user_id)
         self.whois = user_object
         print(self.whois)
         self.key = str(user_id)
         self.votes = vote_list
         self.for_role = nominated_for
-
-    def votes_aye(self):
-        votes_aye = 0
-        for vote in self.votes: votes_aye += (1 if vote["vote"] is True else 0)
-        return votes_aye
-
-    def votes_nay(self):
-        votes_nay = 0
-        for vote in self.votes: votes_aye += (1 if vote["vote"] is False else 0)
-        return votes_nay
-
-    def vote(self, voter, vote: bool):
-        data = read_file("elections.Json")
-        temp_list = {"voter_id": voter.id, "vote": vote}
-        data[self.key]["vote"].append(temp_list)
-        with open("elections.Json", 'w') as file_output_object:
-            json.dump(data, file_output_object, sort_keys=True, indent=4, separators=(',', ': '))
-
-    def votes(self):
-        return self.votes_aye() - self.votes_nay()
 
 
 def get_nominee(ctx, user_id: str, user_object):

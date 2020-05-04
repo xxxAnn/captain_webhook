@@ -18,11 +18,11 @@ HELP_CHANNEL = 700754951558660106
 HELP_LOGS_CHANNEL = 700731099705508010
 PRELIM_VOTING_CHANNEL = 703467261176053811
 VOTING_CHANNEL = 703467201683914822
-
 UPVOTE_EMOJI = "<:voteaye:701929407647842374>"
 UPVOTE_ID = 701929407647842374
-DOWNVOTE_EMOJI = "<:votenay:701929705074589696>" 
+DOWNVOTE_EMOJI = "<:votenay:701929705074589696>"
 DOWNVOTE_ID = 701929705074589696
+
 
 class Miscellaneous(commands.Cog):
 
@@ -201,6 +201,7 @@ class Miscellaneous(commands.Cog):
         message = await channel.send(embed=embed)
         await message.add_reaction(UPVOTE_EMOJI)
         await message.add_reaction(DOWNVOTE_EMOJI)
-        
+
+
 def setup(bot):
     bot.add_cog(Miscellaneous(bot))
