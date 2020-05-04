@@ -164,7 +164,7 @@ class Miscellaneous(commands.Cog):
     async def startprelim(self, ctx):
         if ctx.author.id in admin_list:
             channel = self.bot.get_channel(PRELIM_VOTING_CHANNEL)
-            #TODO Add jump links to suggestions messages
+
             for i in read_file('data/suggestions.Json'):
                 await self.post_suggestion(channel, i['suggestion'], i['jump_url'])
                 time.sleep(.3)
@@ -188,15 +188,8 @@ class Miscellaneous(commands.Cog):
                         num_downvotes = num_downvotes + reaction[1]
                 
                 if num_upvotes > num_downvotes:
-                    # only needed for now while we still don't have embeds for lengthy messages
-                    if len(message.content) != 0:
-                        await self.post_suggestion(voting_channel, message.content[:message.content.rindex("\n Suggestion was too long for embed")])
-                    else:
-                        # Commented for later when all suggestions are embedded in the new format
-                        # message.embeds[0].fields[0].value, message.embeds[0].fields[1].value
-
-                        # extract suggestion and jump_url from previous embed
-                        await self.post_suggestion(voting_channel, message.embeds[0].fields[0].name)
+                    # extract suggestion and jump_url from previous embed
+                    await self.post_suggestion(message.embeds[0].fields[0].value, message.embeds[0].fields[1].value)
                 
 
     async def post_suggestion(self, channel, suggestion, jump_url = "N/A"):
@@ -208,16 +201,6 @@ class Miscellaneous(commands.Cog):
         message = await channel.send(embed=embed)
         await message.add_reaction(UPVOTE_EMOJI)
         await message.add_reaction(DOWNVOTE_EMOJI)
-
-    @commands.command()
-    async def jsonify(self, ctx):
-        if ctx.author.id in admin_list:
-            json_list = []
-            for suggestion in read_file('data/suggestions.Json'):
-                json_list.append({ "suggestion": suggestion, "jump_url": "N/A" })
-
-            with open('data/suggestions.Json', 'w') as file_output_object:
-                json.dump(json_list, file_output_object, sort_keys=True, indent=4, separators=(',', ': '), skipkeys=True)
         
 def setup(bot):
     bot.add_cog(Miscellaneous(bot))
