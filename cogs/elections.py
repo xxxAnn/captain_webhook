@@ -2,6 +2,7 @@ from discord.ext import commands
 import discord
 from Libraries.pirate_lib import read_file, write_file, add_nominee, get_nominee, update_nominations
 import json
+from config.config import admin_list
 PRELIM_CHANNEL_ID = 703043049806233620  # 703043049806233620
 UPVOTE_EMOJI ="<:voteaye:701929407647842374>"
 DOWNVOTE_EMOJI ="<:votenay:701929705074589696>"
@@ -38,16 +39,17 @@ class ElectionCog(commands.Cog):
 
     @commands.command(aliases=['esp'])
     async def electionstartprelim(self, ctx):
-        channel = self.bot.get_channel(PRELIM_CHANNEL_ID)
-        election_file = read_file('data/elections.Json')
-        for user in election_file.keys():
-            if user != "message":
-                for role in election_file[user]["nominee_role_id"]:
-                    embed = discord.Embed(title="Preliminary Voting")
-                    embed.add_field(name="Vote nominee: " + self.bot.get_user(int(user)).display_name + "#" + self.bot.get_user(int(user)).discriminator + " for the following role:", value=ctx.guild.get_role(int(role)).mention)
-                    message = await channel.send(embed=embed)
-                    await message.add_reaction(UPVOTE_EMOJI)
-                    await message.add_reaction(DOWNVOTE_EMOJI)
+        if ctx.author.id in admin_list:
+            channel = self.bot.get_channel(PRELIM_CHANNEL_ID)
+            election_file = read_file('data/elections.Json')
+            for user in election_file.keys():
+                if user != "message":
+                    for role in election_file[user]["nominee_role_id"]:
+                        embed = discord.Embed(title="Preliminary Voting")
+                        embed.add_field(name="Vote nominee: " + self.bot.get_user(int(user)).display_name + "#" + self.bot.get_user(int(user)).discriminator + " for the following role:", value=ctx.guild.get_role(int(role)).mention)
+                        message = await channel.send(embed=embed)
+                        await message.add_reaction(UPVOTE_EMOJI)
+                        await message.add_reaction(DOWNVOTE_EMOJI)
 
 
 def setup(bot):
