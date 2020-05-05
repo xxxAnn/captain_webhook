@@ -4,12 +4,12 @@ from Libraries.pirate_lib import read_file, write_file, add_nominee, get_nominee
 import json
 from config.config import admin_list
 import re
-PRELIM_CHANNEL_ID = 706408810394157077  # 703043049806233620
-#TODO FIX THESE
-UPVOTE_EMOJI ="<:sanasad:633448690874580994>"
-DOWNVOTE_EMOJI ="<:lucioayy:632082533177229313>"
-UPVOTE_EMOJI_ID = 633448690874580994
-DOWNVOTE_EMOJI_ID = 632082533177229313
+PRELIM_CHANNEL_ID = 703043049806233620  # 703043049806233620
+
+UPVOTE_EMOJI ="<:voteaye:701929407647842374>"
+DOWNVOTE_EMOJI ="<:votenay:701929705074589696>"
+UPVOTE_EMOJI_ID = 701929407647842374
+DOWNVOTE_EMOJI_ID = 701929705074589696
 
 
 class ElectionCog(commands.Cog):
@@ -20,10 +20,8 @@ class ElectionCog(commands.Cog):
 
     @commands.command()
     async def nominate(self, ctx, user: discord.Member, role: discord.Role):
-        #TODO REMOVE LAST TWO
-        list_roles = [700732836772053013, 700732374471934053, 701964825227427941, 700733089856356363, 632013377224310795, 634612915650953237]
-        #TODO HERE!
-        channel = self.bot.get_channel(706408810394157077)  # 703035799138074715
+        list_roles = [700732836772053013, 700732374471934053, 701964825227427941, 700733089856356363]
+        channel = self.bot.get_channel(PRELIM_CHANNEL_ID)  # 703035799138074715
         if role.id in list_roles:
             if not str(user.id) in read_file("data/elections.Json"):
                 add_nominee(user.id, role.id)
