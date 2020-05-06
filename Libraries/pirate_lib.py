@@ -100,9 +100,10 @@ def get_nominee(ctx, user_id: str, user_object):
 
 
 def add_nominee(nominee_id: str, role_id: str):
-    temp_dict = {"nominee_role_id": [role_id],
-                 "votes": [
-                 ]}
+    temp_dict = [{
+        "nominee_role_id": role_id,
+        "votes": []
+    }]
     x = read_file("data/elections.Json")
     x[nominee_id] = temp_dict
     with open("data/elections.Json", 'w') as file_output_object:
