@@ -114,6 +114,14 @@ class ElectionCog(commands.Cog):
         with open(file_name, 'w') as file_output_object:
             json.dump(input, file_output_object, sort_keys=True, indent=4, separators=(',', ': '))
 
+    @commands.command()
+    async def jsonify(self, ctx):
+        for user in self.election_contents.keys():
+            if user != "message":
+                nominee_role_ids = list(map(lambda id: { 'nominee_role_id': id, 'votes': [] }, self.election_contents[user]['nominee_role_id']))
+                self.election_contents[user] = nominee_role_ids
+                self.write_to_file('data/elections.Json', self.election_contents)
+
 
 def setup(bot):
     bot.add_cog(ElectionCog(bot))
