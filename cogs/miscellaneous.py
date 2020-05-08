@@ -66,12 +66,13 @@ class Miscellaneous(commands.Cog):
             await ctx.send("You do not have permission to do that")
 
     @commands.command(aliases=['def'])
-    async def define(self, ctx, original_word):
-        word = parser.fetch(original_word)
+    async def define(self, ctx, *original_word):
+        word = "_".join(original_word)
+        word = parser.fetch(word)
         definition = word[0]["definitions"][0]["text"]
         pronunciation = word[0]["pronunciations"]["text"]
         sound = word[0]["pronunciations"]["audio"]
-        pages = Pages(ctx, entries=definition, per_page=4, custom_title="Definition of " + original_word)
+        pages = Pages(ctx, entries=definition, per_page=4, custom_title="Definition of " + " ".join(original_word))
         await pages.paginate()
 
     @commands.command(aliases=["langdiff", "langdifficulty", "lh", "ld"])
