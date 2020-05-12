@@ -189,7 +189,7 @@ class Miscellaneous(commands.Cog):
                 
                 if num_upvotes > num_downvotes:
                     # extract suggestion and jump_url from previous embed
-                    await self.post_suggestion(message.embeds[0].fields[0].value, message.embeds[0].fields[1].value)
+                    await self.post_suggestion(voting_channel, message.embeds[0].fields[0].value, message.embeds[0].fields[1].value)
                 
 
     async def post_suggestion(self, channel, suggestion, jump_url = "N/A"):
