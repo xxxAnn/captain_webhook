@@ -76,7 +76,7 @@ class Miscellaneous(commands.Cog):
             await ctx.send('Word was not found, try changing the capitalization and check your spelling!')
             return
         sound = word[0]["pronunciations"]["audio"]
-        pages = Pages(ctx, entries=definition, per_page=4, custom_title="Definition of " + original_word)
+        pages = Pages(ctx, entries=definition, per_page=4, custom_title="Definition of " + " ".join(original_word)
         await pages.paginate()
 
     @commands.command(aliases=["langdiff", "langdifficulty", "lh", "ld"])
