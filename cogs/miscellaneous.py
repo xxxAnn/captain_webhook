@@ -70,11 +70,11 @@ class Miscellaneous(commands.Cog):
         word = "_".join(original_word)
         word = parser.fetch(word)
         pronunciation = word[0]["pronunciations"]["text"]
+        definition = word[0]["definitions"][0]["text"]
         definition.pop(0)
         if not definition:
             await ctx.send('Word was not found, try changing the capitalization and check your spelling!')
             return
-        definition = word[0]["definitions"][0]["text"]
         sound = word[0]["pronunciations"]["audio"]
         pages = Pages(ctx, entries=definition, per_page=4, custom_title="Definition of " + original_word)
         await pages.paginate()
