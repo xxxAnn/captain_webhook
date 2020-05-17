@@ -61,7 +61,7 @@ async def on_message(message):
     await client.process_commands(message)
 
 
-@client.event
+'''@client.event
 async def on_command_error(ctx, error):
     discord_error = discord.ext.commands.errors
     isinstance_dict = {
@@ -72,7 +72,7 @@ async def on_command_error(ctx, error):
     for key in isinstance_dict.keys():
         if isinstance(error, key):
             await ctx.send(isinstance_dict[key])
-        print(error)
+        print(error)'''
 
 
 client.run(config.token)
