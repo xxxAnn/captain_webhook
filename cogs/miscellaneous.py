@@ -22,7 +22,7 @@ UPVOTE_EMOJI = "<:voteaye:701929407647842374>"
 UPVOTE_ID = 701929407647842374
 DOWNVOTE_EMOJI = "<:votenay:701929705074589696>"
 DOWNVOTE_ID = 701929705074589696
-HELP_LIST = ['Correctme: adds the Correctme role', "Define: returns wiktionary's definition of a word", 'Members: returns the amount of non-bot users in the guild', 'Topic: returns a topic pseudo-randomely', 'TopLanguage: returns the top languages by message count']
+HELP_LIST = ['Correctme: adds the Correctme tag to your nickname', "Define: returns wiktionary's definition of a word", 'Members: returns the amount of non-bot users in the guild', 'Topic: returns a topic pseudo-randomely', 'TopLanguage: returns the top languages by message count']
 
 
 class Miscellaneous(commands.Cog):
@@ -160,14 +160,12 @@ class Miscellaneous(commands.Cog):
 
     @commands.command(aliases=['cm'])
     async def correctme(self, ctx):
-        role = ctx.guild.get_role(705852512267141230)
-        if role in ctx.author.roles:
-            #await ctx.author.remove_roles(role)
-            await ctx.send("Removed correct me role")
+        if "✍" in ctx.author.display_name:
+            await ctx.author.edit(nick=ctx.author.display_name.replace("✍", ""))
+            await ctx.send("Removed correct me tag")
         else:
-            #await ctx.author.add_roles(role)
             await ctx.author.edit(nick=ctx.author.display_name+" ✍")
-            await ctx.send("Added correct me role")
+            await ctx.send("Added correct me tag")
 
     @commands.command(aliases=['sp'])
     async def startprelim(self, ctx):
