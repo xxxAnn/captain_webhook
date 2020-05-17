@@ -8,6 +8,7 @@ import PyDictionary
 import random
 from discord.ext import tasks
 from Libraries.paginator import Pages
+from Libraries.paginator import PagesFromMessage
 from Libraries.pirate_lib import get_topic
 import operator
 from Libraries.pirate_lib import write_file, pull_flag, read_file, get_nominee, add_nominee, append_topic, _resolve_member_id, pirate_error
@@ -21,9 +22,9 @@ parser = WiktionaryParser()
 epoch = time.time()
 config = get_config()
 last_topic = -1
-# client.remove_command(help)
 list_numbers_banned = []
 client = config.client
+client.remove_command("help")
 initial_extensions = ['cogs.moderation', 'cogs.voice_cog', 'cogs.points_cog', 'cogs.miscellaneous', 'cogs.elections']
 
 

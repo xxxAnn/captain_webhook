@@ -4,7 +4,7 @@ import time
 from Libraries.pirate_lib import read_file, write_file, append_topic, get_topic
 from config.config import admin_list
 from wiktionaryparser import WiktionaryParser
-from Libraries.paginator import Pages
+from Libraries.paginator import Pages, PagesFromMessage
 from textblob import TextBlob
 import json
 import time
@@ -22,6 +22,7 @@ UPVOTE_EMOJI = "<:voteaye:701929407647842374>"
 UPVOTE_ID = 701929407647842374
 DOWNVOTE_EMOJI = "<:votenay:701929705074589696>"
 DOWNVOTE_ID = 701929705074589696
+HELP_LIST = ['Correctme: adds the Correctme role', "Define: returns wiktionary's definition of a word", 'Members: returns the amount of non-bot users in the guild', 'Topic: returns a topic pseudo-randomely', 'TopLanguage: returns the top languages by message count']
 
 
 class Miscellaneous(commands.Cog):
@@ -100,6 +101,9 @@ class Miscellaneous(commands.Cog):
         await self.handle_language(message)
         await self.handle_kyando(message)
         await self.handle_suggestion(message)
+        if self.bot.user in message.mentions:
+            pages = PagesFromMessage(self.bot, message, entries=HELP_LIST, per_page=10, custom_title="Here's the list of commands:")
+            await pages.paginate()
 
     async def handle_help(self, message):
         help_logs_channel = self.bot.get_channel(HELP_LOGS_CHANNEL)
@@ -194,8 +198,13 @@ class Miscellaneous(commands.Cog):
                 
                 if num_upvotes > num_downvotes:
                     # extract suggestion and jump_url from previous embed
-                    await self.post_suggestion(voting_channel, message.embeds[0].fields[0].value, message.embeds[0].fields[1].value)
-                
+
+                    await self.post_suggestion(message.embeds[0].fields[0].value, message.embeds[0].fields[1].value)
+
+    @commands.command(aliases=['help', '?'])
+    async def help_command(self, ctx):
+        pages = Pages(ctx, entries=HELP_LIST, per_page=10, custom_title="Help")
+        await pages.paginate()
 
     async def post_suggestion(self, channel, suggestion, jump_url = "N/A"):
         embed = discord.Embed(title="Vote")
