@@ -67,12 +67,17 @@ class Miscellaneous(commands.Cog):
             await ctx.send("You do not have permission to do that")
 
     @commands.command(aliases=['def'])
-    async def define(self, ctx, original_word):
-        word = parser.fetch(original_word)
-        definition = word[0]["definitions"][0]["text"]
+    async def define(self, ctx, *original_word):
+        word = "_".join(original_word)
+        word = parser.fetch(word)
         pronunciation = word[0]["pronunciations"]["text"]
+        definition = word[0]["definitions"][0]["text"]
+        definition.pop(0)
+        if not definition:
+            await ctx.send('Word was not found, try changing the capitalization and check your spelling!')
+            return
         sound = word[0]["pronunciations"]["audio"]
-        pages = Pages(ctx, entries=definition, per_page=4, custom_title="Definition of " + original_word)
+        pages = Pages(ctx, entries=definition, per_page=4, custom_title="Definition of " + " ".join(original_word))
         await pages.paginate()
 
     @commands.command(aliases=["langdiff", "langdifficulty", "lh", "ld"])
@@ -191,6 +196,7 @@ class Miscellaneous(commands.Cog):
                 
                 if num_upvotes > num_downvotes:
                     # extract suggestion and jump_url from previous embed
+
                     await self.post_suggestion(message.embeds[0].fields[0].value, message.embeds[0].fields[1].value)
 
     @commands.command(aliases=['help', '?'])
