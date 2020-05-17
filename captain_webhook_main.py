@@ -21,7 +21,7 @@ parser = WiktionaryParser()
 epoch = time.time()
 config = get_config()
 last_topic = -1
-# client.remove_command(help)
+client.remove_command(help)
 list_numbers_banned = []
 client = config.client
 initial_extensions = ['cogs.moderation', 'cogs.voice_cog', 'cogs.points_cog', 'cogs.miscellaneous', 'cogs.elections']
