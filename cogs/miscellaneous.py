@@ -207,7 +207,7 @@ class Miscellaneous(commands.Cog):
                 if num_upvotes > num_downvotes:
                     # extract suggestion and jump_url from previous embed
 
-                    await self.post_suggestion(message.embeds[0].fields[0].value, message.embeds[0].fields[1].value)
+                    await self.post_suggestion(self.bot.get_channel(VOTING_CHANNEL), message.embeds[0].fields[0].value, message.embeds[0].fields[1].value)
 
     @commands.command(aliases=['help', '?'])
     async def help_command(self, ctx):
