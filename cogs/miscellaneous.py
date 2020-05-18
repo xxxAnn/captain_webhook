@@ -69,6 +69,16 @@ class Miscellaneous(commands.Cog):
     @commands.command(aliases=['def'])
     async def define(self, ctx, *original_word):
         word = "_".join(original_word)
+        if str.lower(word) == "pepely":
+            definition = ["timidly or shyly \n *He pepely looked around the corner* - Coal", "Rapidly peeking at someone or something \n *I pepely peaked in the locker-room* - Law", "doing something and making it the shittiest work ever \n *Dmitri never gets it right; whatever he does, he does it pepely, indeed.* - Neo"]
+            pages = Pages(ctx, entries=definition, per_page=4, custom_title="Definition of " + " ".join(original_word))
+            await pages.paginate()
+            return
+        if str.lower(word) == "breadly":
+            definition = ["to do as a personified piece of bread would. \n *I love putting my hands in wheat, you know, massaging it, breadly*. - Panto", "cook something like how you bake bread \n *Ma' man always cooks da meat breadly.* - Neo"]
+            pages = Pages(ctx, entries=definition, per_page=4, custom_title="Definition of " + " ".join(original_word))
+            await pages.paginate()
+            return
         word = parser.fetch(word)
         pronunciation = word[0]["pronunciations"]["text"]
         definition = word[0]["definitions"][0]["text"]
