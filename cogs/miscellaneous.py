@@ -98,11 +98,12 @@ class Miscellaneous(commands.Cog):
     async def eval(self, ctx, method, *, arg=None):
         if arg: arg = "".join(arg)
         func = getattr(ctx, method)
-        if arg.isnumeric():
-            arg = int(arg)
-            x = await func(arg)
-            await ctx.send(x)
-            return
+        if arg:
+            if arg.isnumeric():
+                arg = int(arg)
+                x = await func(arg)
+                await ctx.send(x)
+                return
         if arg is None:
             x = await func()
             await ctx.send(x)
