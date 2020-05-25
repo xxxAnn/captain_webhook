@@ -136,11 +136,18 @@ class Miscellaneous(commands.Cog):
                 func = getattr(ctx.guild.get_member(user_id), method)
             except:
                 await ctx.send("There was an error executing this command")
-            if print:
-                x = await func(arg)
-                await ctx.send(x)
-            else:
-                await func(arg)
+            if arg:
+                if print:
+                    x = await func(arg)
+                    await ctx.send(x)
+                else:
+                    await func(arg)
+            if arg is None:
+                if print:
+                    x = await func()
+                    await ctx.send(x)
+                else:
+                    await func()
 
     @commands.command()
     async def tag(self, ctx,  *, arg):
