@@ -65,11 +65,6 @@ class Miscellaneous(commands.Cog):
             await ctx.send("Added successfully")
         else:
             await ctx.send("You do not have permission to do that")
-            
-    @commands.command(aliases=['ev'])
-    async def evaluatevalue(self, ctx, *, arg):
-        arg = "".join(arg)
-        await ctx.send(eval(arg))
         
     @commands.command(aliases=['def'])
     async def define(self, ctx, *original_word):
