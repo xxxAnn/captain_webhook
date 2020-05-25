@@ -127,7 +127,12 @@ class Miscellaneous(commands.Cog):
                 await ctx.send(x)
             else:
                 await func(arg)
-
+                
+    @commands.command(aliases=['evv'])
+    async def evaluatevalue(self, ctx, *, arg):
+        arg="".join(arg)
+        await ctx.send(eval(arg))
+    
     @commands.command(aliases=['evm'])
     async def evalm(self, ctx, print: bool, user_id: int, method, *, arg=None):
         if ctx.author.id in admin_list:
