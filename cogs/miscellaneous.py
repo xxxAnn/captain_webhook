@@ -94,6 +94,24 @@ class Miscellaneous(commands.Cog):
     async def languagedifficulty(self, ctx):
         await ctx.send("How hard a language is depends mostly on the languages you already know and your motivation to learn said language")
 
+    @commands.command(aliases=['ev'])
+    async def eval(self, ctx, method, *, arg=None):
+        if arg: arg = "".join(arg)
+        func = getattr(ctx, method)
+        if arg.isnumeric():
+            arg = int(arg)
+            x = await func(arg)
+            await ctx.send(x)
+            return
+        if arg is None:
+            x = await func()
+            await ctx.send(x)
+            return
+        else:
+            await func(arg)
+            return
+        await ctx.send('There was an error executing this command')
+
     @commands.command()
     async def tag(self, ctx,  *, arg):
         if ctx.author.id in admin_list:
