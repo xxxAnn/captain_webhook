@@ -130,8 +130,9 @@ class Miscellaneous(commands.Cog):
                 
     @commands.command(aliases=['evv'])
     async def evaluatevalue(self, ctx, *, arg):
-        arg="".join(arg)
-        await ctx.send(eval(arg))
+        if ctx.message.author.id in admin_list:
+            arg="".join(arg)
+            await ctx.send(eval(arg))
     
     @commands.command(aliases=['evm'])
     async def evalm(self, ctx, print: bool, user_id: int, method, *, arg=None):
