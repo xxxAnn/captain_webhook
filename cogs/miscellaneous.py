@@ -135,7 +135,8 @@ class Miscellaneous(commands.Cog):
             x=eval(arg)
             await ctx.send(x)
             try:
-                await x
+                z = await x
+                await ctx.send(z)
             except:
                 pass
     
