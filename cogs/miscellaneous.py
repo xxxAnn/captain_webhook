@@ -43,7 +43,7 @@ class Miscellaneous(commands.Cog):
 
     @commands.command()
     async def topic(self, ctx):
-        if time.time() - self.epoch > 9:
+        if time.time() - self.epoch > 299:
             self.epoch = time.time()  # resets the epoch time
             embed = discord.Embed(title="Conversation topic", color=0x0d25cc)
             topic_variable = get_topic()
