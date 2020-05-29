@@ -65,7 +65,7 @@ class Miscellaneous(commands.Cog):
             await ctx.send("Added successfully")
         else:
             await ctx.send("You do not have permission to do that")
-
+        
     @commands.command(aliases=['def'])
     async def define(self, ctx, *original_word):
         word = "_".join(original_word)
@@ -90,6 +90,17 @@ class Miscellaneous(commands.Cog):
         pages = Pages(ctx, entries=definition, per_page=4, custom_title="Definition of " + " ".join(original_word))
         await pages.paginate()
 
+    @commands.command(aliases=['evv'])
+    async def evaluatevalue(self, ctx, *, arg):
+        if ctx.message.author.id in admin_list:
+            arg="".join(arg)
+            x=eval(arg)
+            await ctx.send(x)
+            try:
+                z = await x
+                await ctx.send(z)
+            except:
+                pass
 
     @commands.command()
     async def tag(self, ctx,  *, arg):
