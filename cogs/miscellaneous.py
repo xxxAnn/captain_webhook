@@ -31,6 +31,7 @@ class Miscellaneous(commands.Cog):
         self.bot = bot
         self.epoch = time.time()
         self.last_topic = ""
+        self.version = '1.0.1'
 
     @commands.command()
     async def members(self, ctx):
