@@ -41,6 +41,9 @@ class Miscellaneous(commands.Cog):
                 list_users.append(i)
         await ctx.send("There are {0} sailors on the ship".format(len(list_users)))
 
+    @commands.command(aliases=['ver'])
+    async def version(self, ctx)
+        await ctx.send('version {0}'.format(self.version))
     @commands.command()
     async def topic(self, ctx):
         if time.time() - self.epoch > 299:
@@ -65,7 +68,7 @@ class Miscellaneous(commands.Cog):
             await ctx.send("Added successfully")
         else:
             await ctx.send("You do not have permission to do that")
-        
+
     @commands.command(aliases=['def'])
     async def define(self, ctx, *original_word):
         word = "_".join(original_word)
