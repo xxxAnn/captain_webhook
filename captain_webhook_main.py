@@ -1,4 +1,5 @@
 # python 3.7
+version = '1.0'
 import discord  # version 1.3.2
 from discord.ext.commands import Bot, CommandNotFound, has_permissions
 import json
