@@ -25,7 +25,7 @@ last_topic = -1
 list_numbers_banned = []
 client = config.client
 client.remove_command("help")
-initial_extensions = ['cogs.moderation', 'cogs.voice_cog', 'cogs.points_cog', 'cogs.miscellaneous', 'cogs.elections']
+initial_extensions = ['cogs.voice_cog', 'cogs.miscellaneous', 'cogs.elections']
 
 
 if __name__ == '__main__':
@@ -40,20 +40,6 @@ async def on_ready():
     print(client.user.id)
     print('------')
     config.guild = client.get_guild(700665943835148330)
-    award_vc_points.start()
-
-
-@tasks.loop(seconds=300)
-async def award_vc_points():
-    for member in config.guild.members:
-        if member.voice is not None:
-            if str(member.id) not in read_file("user_data.Json"):
-                write_file('data/user_data.Json', {'voice_points': 0, 'text_points': 0, 'cooldown': time.time()},
-                           str(member.id))
-            elif member.voice.mute is False and member.voice.self_mute is False:
-                user_data = read_file('user_data.Json')[str(member.id)]
-                user_data['voice_points'] += 5
-                write_file('user_data.Json', user_data, str(member.id))
 
 
 @client.event
@@ -61,7 +47,7 @@ async def on_message(message):
     await client.process_commands(message)
 
 
-'''@client.event
+@client.event
 async def on_command_error(ctx, error):
     discord_error = discord.ext.commands.errors
     isinstance_dict = {
@@ -72,7 +58,7 @@ async def on_command_error(ctx, error):
     for key in isinstance_dict.keys():
         if isinstance(error, key):
             await ctx.send(isinstance_dict[key])
-        print(error)'''
+        print(error)
 
 
 client.run(config.token)

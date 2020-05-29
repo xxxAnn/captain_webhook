@@ -90,64 +90,6 @@ class Miscellaneous(commands.Cog):
         pages = Pages(ctx, entries=definition, per_page=4, custom_title="Definition of " + " ".join(original_word))
         await pages.paginate()
 
-    @commands.command(aliases=["langdiff", "langdifficulty", "lh", "ld"])
-    async def languagedifficulty(self, ctx):
-        await ctx.send("How hard a language is depends mostly on the languages you already know and your motivation to learn said language")
-
-    @commands.command(aliases=['ev'])
-    async def eval(self, ctx, method, *, arg=None):
-        if ctx.author.id in admin_list:
-            if arg: arg = "".join(arg)
-            func = getattr(ctx, method)
-            if arg:
-                if arg.isnumeric():
-                    arg = int(arg)
-                    x = await func(arg)
-                    await ctx.send(x)
-                    return
-            if arg is None:
-                x = await func()
-                await ctx.send(x)
-                return
-            else:
-                await func(arg)
-                return
-            await ctx.send('There was an error executing this command')
-
-    @commands.command(aliases=['evu'])
-    async def evalu(self, ctx, print: bool, user_id: int, method, *, arg=None):
-        if ctx.author.id in admin_list:
-            if arg is not None: arg = "".join(arg)
-            try:
-                func = getattr(self.bot.get_user(user_id), method)
-            except:
-                await ctx.send("There was an error executing this command")
-            if print:
-                x = await func(arg)
-                await ctx.send(x)
-            else:
-                await func(arg)
-
-    @commands.command(aliases=['evm'])
-    async def evalm(self, ctx, print: bool, user_id: int, method, *, arg=None):
-        if ctx.author.id in admin_list:
-            if arg is not None: arg = "".join(arg)
-            try:
-                func = getattr(ctx.guild.get_member(user_id), method)
-            except:
-                await ctx.send("There was an error executing this command")
-            if arg:
-                if print:
-                    x = await func(arg)
-                    await ctx.send(x)
-                else:
-                    await func(arg)
-            if arg is None:
-                if print:
-                    x = await func()
-                    await ctx.send(x)
-                else:
-                    await func()
 
     @commands.command()
     async def tag(self, ctx,  *, arg):
@@ -258,7 +200,7 @@ class Miscellaneous(commands.Cog):
                         num_upvotes = num_upvotes + reaction[1]
                     elif reaction[0] == DOWNVOTE_ID:
                         num_downvotes = num_downvotes + reaction[1]
-                
+
                 if num_upvotes > num_downvotes:
                     # extract suggestion and jump_url from previous embed
 
