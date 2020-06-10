@@ -35,7 +35,11 @@ class Miscellaneous(commands.Cog):
         self.epoch = time.time()
         self.last_topic = ""
         self.version = '1.0.3'
-        self.most_recent_update = "Added student mode function (unimplemented)"
+        self.changelog = "**__1.03__**:\n・Added student mode function (unimplemented)・Added changelog"
+
+    @commands.command()
+    async def changelog(self, ctx)
+        await ctx.send(self.changelog)
 
     @commands.command()
     async def members(self, ctx):
