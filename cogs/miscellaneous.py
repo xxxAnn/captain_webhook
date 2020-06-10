@@ -54,10 +54,11 @@ class Miscellaneous(commands.Cog):
     async def studentmode(self, ctx):
         role = ctx.guild.get_role(STUDENT_MODE_ROLE_ID)
         if role in ctx.author.roles:
-            ctx.author.remove_roles(role)
+            await ctx.author.remove_roles(role)
+            await ctx.send("Remove Student Mode")
         else:
-            ctx.author.add_roles(role)
-
+            await ctx.author.add_roles(role)
+            await ctx.send("Added Student Mode")
     @commands.command(aliases=['ver'])
     async def version(self, ctx):
         await ctx.send('version {0}'.format(self.version))
