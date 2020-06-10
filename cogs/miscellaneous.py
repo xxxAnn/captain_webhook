@@ -37,7 +37,7 @@ class Miscellaneous(commands.Cog):
         self.version = '1.0.3'
         self.changelog = "**__1.03__**:\n・Added student mode function (implemented)\n・Added changelog"
 
-    @commands.command()
+    @commands.command(aliases=['cg'])
     async def changelog(self, ctx):
         await ctx.send(self.changelog)
 
@@ -55,7 +55,7 @@ class Miscellaneous(commands.Cog):
         role = ctx.guild.get_role(STUDENT_MODE_ROLE_ID)
         if role in ctx.author.roles:
             await ctx.author.remove_roles(role)
-            await ctx.send("Remove Student Mode")
+            await ctx.send("Removed Student Mode")
         else:
             await ctx.author.add_roles(role)
             await ctx.send("Added Student Mode")
