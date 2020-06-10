@@ -10,6 +10,8 @@ import json
 import time
 import operator
 from iso639 import languages
+from random_word import RandomWords
+random_words = RandomWords()
 parser = WiktionaryParser()
 
 SUGGESTIONS_CHANNEL = 701922472538144778
@@ -23,7 +25,7 @@ UPVOTE_ID = 701929407647842374
 DOWNVOTE_EMOJI = "<:votenay:701929705074589696>"
 DOWNVOTE_ID = 701929705074589696
 HELP_LIST = ['Correctme: adds the Correctme tag to your nickname', "Define: returns wiktionary's definition of a word", 'Members: returns the amount of non-bot users in the guild', 'Topic: returns a topic pseudo-randomely', 'TopLanguage: returns the top languages by message count']
-
+WORD_OF_THE_DAY_CHANNEL_ID = None
 
 class Miscellaneous(commands.Cog):
 
@@ -31,7 +33,7 @@ class Miscellaneous(commands.Cog):
         self.bot = bot
         self.epoch = time.time()
         self.last_topic = ""
-        self.version = '1.0.1'
+        self.version = '1.0.2'
 
     @commands.command()
     async def members(self, ctx):
@@ -70,6 +72,10 @@ class Miscellaneous(commands.Cog):
             await ctx.send("Added successfully")
         else:
             await ctx.send("You do not have permission to do that")
+
+    async def get_word_of_the_day(self):
+        word_of_the_day = random_words.get_random_word(hasDictionaryDef="true", includePartOfSpeech="noun,verb,adjective", minCorpusCount=1, maxCorpusCount=10, minDictionaryCount=1, maxDictionaryCount=10, minLength=5)
+        return word_of_the_day
 
     @commands.command(aliases=['def'])
     async def define(self, ctx, *original_word):
