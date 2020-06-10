@@ -26,6 +26,7 @@ DOWNVOTE_EMOJI = "<:votenay:701929705074589696>"
 DOWNVOTE_ID = 701929705074589696
 HELP_LIST = ['Correctme: adds the Correctme tag to your nickname', "Define: returns wiktionary's definition of a word", 'Members: returns the amount of non-bot users in the guild', 'Topic: returns a topic pseudo-randomely', 'TopLanguage: returns the top languages by message count']
 WORD_OF_THE_DAY_CHANNEL_ID = None
+STUDENT_MODE_ROLE_ID = None
 
 class Miscellaneous(commands.Cog):
 
@@ -33,7 +34,8 @@ class Miscellaneous(commands.Cog):
         self.bot = bot
         self.epoch = time.time()
         self.last_topic = ""
-        self.version = '1.0.2'
+        self.version = '1.0.3'
+        self.most_recent_update = "Added student mode function (unimplemented)"
 
     @commands.command()
     async def members(self, ctx):
@@ -43,6 +45,14 @@ class Miscellaneous(commands.Cog):
             if i.bot is False:
                 list_users.append(i)
         await ctx.send("There are {0} sailors on the ship".format(len(list_users)))
+
+    @commands.command(aliases=['stmd'])
+    async def studentmode(self, ctx):
+        role = ctx.guild.get_role(STUDENT_MODE_ROLE_ID)
+        if role in ctx.author.roles:
+            ctx.author.remove_roles(role)
+        else:
+            ctx.author.add_roles(role)
 
     @commands.command(aliases=['ver'])
     async def version(self, ctx):
