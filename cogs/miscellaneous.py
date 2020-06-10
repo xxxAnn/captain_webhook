@@ -26,7 +26,7 @@ DOWNVOTE_EMOJI = "<:votenay:701929705074589696>"
 DOWNVOTE_ID = 701929705074589696
 HELP_LIST = ['Correctme: adds the Correctme tag to your nickname', "Define: returns wiktionary's definition of a word", 'Members: returns the amount of non-bot users in the guild', 'Topic: returns a topic pseudo-randomely', 'TopLanguage: returns the top languages by message count']
 WORD_OF_THE_DAY_CHANNEL_ID = None
-STUDENT_MODE_ROLE_ID = None
+STUDENT_MODE_ROLE_ID = 720369584481501295
 
 class Miscellaneous(commands.Cog):
 
@@ -35,7 +35,7 @@ class Miscellaneous(commands.Cog):
         self.epoch = time.time()
         self.last_topic = ""
         self.version = '1.0.3'
-        self.changelog = "**__1.03__**:\n・Added student mode function (unimplemented)・Added changelog"
+        self.changelog = "**__1.03__**:\n・Added student mode function (implemented)\n・Added changelog"
 
     @commands.command()
     async def changelog(self, ctx):
