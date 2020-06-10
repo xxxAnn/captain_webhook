@@ -38,7 +38,7 @@ class Miscellaneous(commands.Cog):
         self.changelog = "**__1.03__**:\n・Added student mode function (unimplemented)・Added changelog"
 
     @commands.command()
-    async def changelog(self, ctx)
+    async def changelog(self, ctx):
         await ctx.send(self.changelog)
 
     @commands.command()
