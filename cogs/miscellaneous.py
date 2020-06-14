@@ -22,6 +22,7 @@ HELP_CHANNEL = 700754951558660106
 HELP_LOGS_CHANNEL = 700731099705508010
 PRELIM_VOTING_CHANNEL = 703467261176053811
 VOTING_CHANNEL = 703467201683914822
+learner_role_activated = False
 UPVOTE_EMOJI = "<:voteaye:701929407647842374>"
 UPVOTE_ID = 701929407647842374
 DOWNVOTE_EMOJI = "<:votenay:701929705074589696>"
@@ -29,6 +30,7 @@ DOWNVOTE_ID = 701929705074589696
 HELP_LIST = ['Correctme: adds the Correctme tag to your nickname', "Define: returns wiktionary's definition of a word", 'Members: returns the amount of non-bot users in the guild', 'Topic: returns a topic pseudo-randomely', 'TopLanguage: returns the top languages by message count', 'Frequency: returns the frequency of a word on a scale of 0 to 8']
 WORD_OF_THE_DAY_CHANNEL_ID = None
 STUDENT_MODE_ROLE_ID = 720369584481501295
+LEARNER_ROLE_ID = 721874016327172120
 
 class Miscellaneous(commands.Cog):
 
@@ -36,8 +38,8 @@ class Miscellaneous(commands.Cog):
         self.bot = bot
         self.epoch = time.time()
         self.last_topic = ""
-        self.version = '1.04'
-        self.changelog = "**__1.04__**:\n・Added word frequency"
+        self.version = '1.05'
+        self.changelog = "**__1.05__**:\n・Added Learner role"
 
     @commands.command(aliases=['cg'])
     async def changelog(self, ctx):
@@ -46,6 +48,24 @@ class Miscellaneous(commands.Cog):
     @commands.command(aliases=['fq'])
     async def frequency(self, ctx, word):
         await ctx.send(str(zipf_frequency(word, 'en', wordlist='best'))+'/8')
+
+    @commands.Cog.listener()
+    async def on_member_update(before, after):
+        if learner_role_activated is True:
+            GUILD = self.bot.get_guild(700665943835148330)
+            C2_ROLE = GUILD.get_role(700732394881286225)
+            C1_ROLE = GUILD.get_role(700732946893635605) --
+            B2_ROLE = GUILD.get_role(700732968217346099)
+            B1_ROLE = GUILD.get_role(701045578938974240) --
+            A2_ROLE = GUILD.get_role(700733050547470337)
+            A1_ROLE = GUILD.get_role(701042693811339314)
+            LEARNER_ROLE = GUILD.get_role(LEARNER_ROLE_ID)
+            if C2_ROLE in after.roles() or C1_ROLE in after.roles() or B2_ROLE in after.roles() or B1_ROLE in after.roles() or A2_ROLE in after.roles() or A1_ROLE in after.roles():
+                if not LEARNER_ROLE in after.roles:
+                    await after.add_roles(LEARNER_ROLE)
+            else:
+                if LEARNER_ROLE in after.roles:
+                    await after.remove_roles(LEARNER_ROLE)
 
     @commands.command()
     async def members(self, ctx):
