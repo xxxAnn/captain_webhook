@@ -44,7 +44,7 @@ class Miscellaneous(commands.Cog):
         await ctx.send(self.changelog)
 
     @commands.command()
-    async def frequency(self, ctx, word)
+    async def frequency(self, ctx, word):
         await ctx.send(zipf_frequency(word, 'en', wordlist='best'))
 
     @commands.command()
