@@ -26,7 +26,7 @@ UPVOTE_EMOJI = "<:voteaye:701929407647842374>"
 UPVOTE_ID = 701929407647842374
 DOWNVOTE_EMOJI = "<:votenay:701929705074589696>"
 DOWNVOTE_ID = 701929705074589696
-HELP_LIST = ['Correctme: adds the Correctme tag to your nickname', "Define: returns wiktionary's definition of a word", 'Members: returns the amount of non-bot users in the guild', 'Topic: returns a topic pseudo-randomely', 'TopLanguage: returns the top languages by message count']
+HELP_LIST = ['Correctme: adds the Correctme tag to your nickname', "Define: returns wiktionary's definition of a word", 'Members: returns the amount of non-bot users in the guild', 'Topic: returns a topic pseudo-randomely', 'TopLanguage: returns the top languages by message count', 'Frequency: returns the frequency of a word on a scale of 0 to 8']
 WORD_OF_THE_DAY_CHANNEL_ID = None
 STUDENT_MODE_ROLE_ID = 720369584481501295
 
@@ -43,9 +43,9 @@ class Miscellaneous(commands.Cog):
     async def changelog(self, ctx):
         await ctx.send(self.changelog)
 
-    @commands.command()
+    @commands.command(aliases=['fq'])
     async def frequency(self, ctx, word):
-        await ctx.send(zipf_frequency(word, 'en', wordlist='best'))
+        await ctx.send(str(zipf_frequency(word, 'en', wordlist='best'))+'/8')
 
     @commands.command()
     async def members(self, ctx):
@@ -65,6 +65,7 @@ class Miscellaneous(commands.Cog):
         else:
             await ctx.author.add_roles(role)
             await ctx.send("Added Student Mode")
+
     @commands.command(aliases=['ver'])
     async def version(self, ctx):
         await ctx.send('version {0}'.format(self.version))
@@ -185,7 +186,7 @@ class Miscellaneous(commands.Cog):
                                   skipkeys=True)
 
     async def handle_kyando(self, message):
-        if "kyando" in str.lower(message.content):
+        if "kyando" in str.lower(message.content) and message.author.id is not 331431342438875137:
             await self.bot.get_user(331431342438875137).send("You were mentioned in: "+ message.jump_url)
 
     async def handle_suggestion(self, message):
