@@ -11,6 +11,8 @@ import time
 import operator
 from iso639 import languages
 from random_word import RandomWords
+from wordfreq import word_frequency
+from wordfreq import zipf_frequency
 random_words = RandomWords()
 parser = WiktionaryParser()
 
@@ -34,12 +36,16 @@ class Miscellaneous(commands.Cog):
         self.bot = bot
         self.epoch = time.time()
         self.last_topic = ""
-        self.version = '1.03'
-        self.changelog = "**__1.03__**:\n・Added student mode function (implemented)\n・Added changelog"
+        self.version = '1.04'
+        self.changelog = "**__1.04__**:\n・Added word frequency"
 
     @commands.command(aliases=['cg'])
     async def changelog(self, ctx):
         await ctx.send(self.changelog)
+
+    @commands.command()
+    async def frequency(self, ctx, word)
+        await ctx.send(zipf_frequency(word, 'en', wordlist='best'))
 
     @commands.command()
     async def members(self, ctx):
