@@ -34,7 +34,7 @@ class Miscellaneous(commands.Cog):
         self.bot = bot
         self.epoch = time.time()
         self.last_topic = ""
-        self.version = '1.0.3'
+        self.version = '1.03'
         self.changelog = "**__1.03__**:\n・Added student mode function (implemented)\n・Added changelog"
 
     @commands.command(aliases=['cg'])
@@ -105,10 +105,14 @@ class Miscellaneous(commands.Cog):
             pages = Pages(ctx, entries=definition, per_page=4, custom_title="Definition of " + " ".join(original_word))
             await pages.paginate()
             return
-        word = parser.fetch(word)
-        pronunciation = word[0]["pronunciations"]["text"]
-        definition = word[0]["definitions"][0]["text"]
-        definition.pop(0)
+        try:
+            word = parser.fetch(word)
+            pronunciation = word[0]["pronunciations"]["text"]
+            definition = word[0]["definitions"][0]["text"]
+            definition.pop(0)
+        except:
+            await ctx.send('Word was not found, try changing the capitalization and check your spelling!')
+            return
         if not definition:
             await ctx.send('Word was not found, try changing the capitalization and check your spelling!')
             return
