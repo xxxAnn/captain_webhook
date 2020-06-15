@@ -46,7 +46,7 @@ class Miscellaneous(commands.Cog):
         await ctx.send(self.changelog)
 
     async def toggle_learner_role(self):
-        if learner_role_activated = False:
+        if learner_role_activated is False:
             learner_role_activated = True
         else:
             learner_role_activated = False
