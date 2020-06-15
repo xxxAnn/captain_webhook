@@ -54,9 +54,9 @@ class Miscellaneous(commands.Cog):
         if learner_role_activated is True:
             GUILD = self.bot.get_guild(700665943835148330)
             C2_ROLE = GUILD.get_role(700732394881286225)
-            C1_ROLE = GUILD.get_role(700732946893635605) --
+            C1_ROLE = GUILD.get_role(700732946893635605)
             B2_ROLE = GUILD.get_role(700732968217346099)
-            B1_ROLE = GUILD.get_role(701045578938974240) --
+            B1_ROLE = GUILD.get_role(701045578938974240)
             A2_ROLE = GUILD.get_role(700733050547470337)
             A1_ROLE = GUILD.get_role(701042693811339314)
             LEARNER_ROLE = GUILD.get_role(LEARNER_ROLE_ID)
