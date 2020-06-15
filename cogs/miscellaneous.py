@@ -57,6 +57,7 @@ class Miscellaneous(commands.Cog):
     @commands.Cog.listener()
     async def on_member_update(self, before, after):
         if learner_role_activated is True:
+            print('hey')
             GUILD = self.bot.get_guild(700665943835148330)
             C2_ROLE = GUILD.get_role(700732394881286225)
             C1_ROLE = GUILD.get_role(700732946893635605)
@@ -65,6 +66,7 @@ class Miscellaneous(commands.Cog):
             A2_ROLE = GUILD.get_role(700733050547470337)
             A1_ROLE = GUILD.get_role(701042693811339314)
             LEARNER_ROLE = GUILD.get_role(LEARNER_ROLE_ID)
+            print(after.roles)
             if C2_ROLE in after.roles() or C1_ROLE in after.roles() or B2_ROLE in after.roles() or B1_ROLE in after.roles() or A2_ROLE in after.roles() or A1_ROLE in after.roles():
                 if not LEARNER_ROLE in after.roles:
                     await after.add_roles(LEARNER_ROLE)
