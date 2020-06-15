@@ -50,7 +50,7 @@ class Miscellaneous(commands.Cog):
         await ctx.send(str(zipf_frequency(word, 'en', wordlist='best'))+'/8')
 
     @commands.Cog.listener()
-    async def on_member_update(before, after):
+    async def on_member_update(self, before, after):
         if learner_role_activated is True:
             GUILD = self.bot.get_guild(700665943835148330)
             C2_ROLE = GUILD.get_role(700732394881286225)
