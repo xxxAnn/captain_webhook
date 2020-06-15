@@ -45,6 +45,11 @@ class Miscellaneous(commands.Cog):
     async def changelog(self, ctx):
         await ctx.send(self.changelog)
 
+    async def toggle_learner_role(self):
+        if learner_role_activated = False:
+            learner_role_activated = True
+        else:
+            learner_role_activated = False
     @commands.command(aliases=['fq'])
     async def frequency(self, ctx, word):
         await ctx.send(str(zipf_frequency(word, 'en', wordlist='best'))+'/8')
