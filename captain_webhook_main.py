@@ -1,5 +1,5 @@
 # python 3.7
-version = '1.0.2'
+version = '1.1'
 import discord  # version 1.3.2
 from discord.ext.commands import Bot, CommandNotFound, has_permissions
 import json
@@ -26,12 +26,7 @@ last_topic = -1
 list_numbers_banned = []
 client = config.client
 client.remove_command("help")
-initial_extensions = ['cogs.voice_cog', 'cogs.miscellaneous', 'cogs.elections']
-
-
-if __name__ == '__main__':
-    for extension in initial_extensions:
-        client.load_extension(extension)
+initial_extensions = ['cogs.voice_cog', 'cogs.voting', 'cogs.elections', 'cogs.Miscellaneous']
 
 
 @client.event
@@ -41,6 +36,8 @@ async def on_ready():
     print(client.user.id)
     print('------')
     config.guild = client.get_guild(700665943835148330)
+    for extension in initial_extensions:
+        client.load_extension(extension)
 
 
 @client.event

@@ -38,8 +38,8 @@ class Miscellaneous(commands.Cog):
         self.bot = bot
         self.epoch = time.time()
         self.last_topic = ""
-        self.version = '1.05'
-        self.changelog = "**__1.05__**:\n・Added Learner role"
+        self.version = '1.1'
+        self.changelog = "**__{0}__**:\n・Completely automated the voting process.".format(self.version)
 
     @commands.command(aliases=['cg'])
     async def changelog(self, ctx):
