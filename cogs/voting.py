@@ -47,7 +47,7 @@ class Voting(commands.Cog):
 
     @loop_prelim.before_loop
     async def before_loop_prelim(self):
-        datetime_obj = await self.get_new_weekday(5)
+        datetime_obj = await self.get_next_weekday(5)
         await discord.utils.sleep_until(datetime_obj)
         await self.start_prelims()
 
