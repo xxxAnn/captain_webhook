@@ -26,7 +26,7 @@ last_topic = -1
 list_numbers_banned = []
 client = config.client
 client.remove_command("help")
-initial_extensions = ['cogs.voice_cog', 'cogs.voting', 'cogs.elections', 'cogs.Miscellaneous']
+initial_extensions = ['cogs.voice_cog', 'cogs.voting', 'cogs.elections', 'cogs.miscellaneous']
 
 
 @client.event
