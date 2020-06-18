@@ -66,6 +66,9 @@ class Voting(commands.Cog):
         await self.start_voting()
 
     async def start_voting(self):
+        await self.voting_channel.set_permissions(self.ship_crew_role, read_messages=True)
+        await self.prelim_voting_channel.set_permissions(self.ship_crew_role, read_messages=False, send_messages=False)
+        await self.prelim_voting_channel.set_permissions(self.sailor_role, read_messages=False, send_messages=False)
         bot_messages = await self.prelim_voting_channel.history().filter(lambda member: member.author.id == self.bot.user.id).flatten()
         bot_messages.reverse()
         for message in bot_messages:
