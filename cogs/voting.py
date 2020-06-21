@@ -49,7 +49,6 @@ class Voting(commands.Cog):
     async def before_loop_prelim(self):
         datetime_obj = await self.get_next_weekday(5)
         await discord.utils.sleep_until(datetime_obj)
-        await self.start_prelims()
 
     async def post_suggestion(self, channel, suggestion, jump_url = "N/A"):
         embed = discord.Embed(title="Vote")
@@ -90,7 +89,6 @@ class Voting(commands.Cog):
     async def before_loop_voting(self):
         datetime_obj = await self.get_next_weekday(0)
         await discord.utils.sleep_until(datetime_obj)
-        await self.start_voting()
 
 
 def setup(bot):
