@@ -55,7 +55,7 @@ async def on_command_error(ctx, error):
     }
     for key in isinstance_dict.keys():
         if isinstance(error, key):
-            await ctx.send(isinstance_dict[key])
+            await ctx.send(isinstance_dict[key] + "\n" + str(error))
         print(error)
 
 

@@ -20,7 +20,7 @@ class ElectionCog(commands.Cog):
 
     @commands.command()
     async def nominate(self, ctx, user: discord.Member, role: discord.Role):
-        list_roles = [700732836772053013, 700732374471934053, 701964825227427941, 700733089856356363]
+        list_roles = [700732836772053013, 700732374471934053, 701964825227427941, 700733089856356363, 726490219825594378]
         channel = self.bot.get_channel(PRELIM_CHANNEL_ID)  # 703035799138074715
         if role.id in list_roles:
             if not str(user.id) in read_file("data/elections.Json"):
@@ -45,7 +45,7 @@ class ElectionCog(commands.Cog):
             if role_id == nomination['nominee_role_id']:
                 return False
         return True
-    
+
     def add_role_id_to_elections(self, role_id, user_id):
         self.election_contents[str(user_id)].append({ "nominee_role_id": role_id, "votes":[] })
         self.write_to_file("data/elections.Json", self.election_contents)
@@ -73,7 +73,7 @@ class ElectionCog(commands.Cog):
             message = reaction.message.embeds[0]
             nominee_id = re.match(r'^.*?(\d+).*$', message.fields[0].value).groups()[0]
             role_id = re.match(r'^.*?(\d+).*$', message.fields[1].value).groups()[0]
-            
+
             wx = self.election_contents
             nomination_votes = wx[str(nominee_id)][self.find_nomination_index(wx[str(nominee_id)], role_id)]['votes']
             if reaction.emoji.id == UPVOTE_EMOJI_ID:
