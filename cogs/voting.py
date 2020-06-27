@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from Libraries.pirate_lib import read_file, write_file, append_topic, get_topic
 import time
 
-PRELIM_VOTING_CHANNEL_ID = 701954343447953428 # 703467261176053811
+PRELIM_VOTING_CHANNEL_ID = 703467261176053811 # 703467261176053811
 VOTING_CHANNEL_ID = 703467201683914822
 SHIP_CREW = 701963261557342299
 SAILOR = 702282763570511882
@@ -38,7 +38,7 @@ class Voting(commands.Cog):
         datetime_obj = await self.get_next_weekday(5)
         print(datetime_obj)
         await discord.utils.sleep_until(datetime_obj)
-        
+
     async def get_next_weekday(self, weekday):
         d = datetime.utcnow().replace(hour=0, minute=0, second=0)
         t = timedelta((7 + weekday - d.weekday()) % 7)
