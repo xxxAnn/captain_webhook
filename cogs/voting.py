@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from Libraries.pirate_lib import read_file, write_file, append_topic, get_topic
 import time
 
-PRELIM_VOTING_CHANNEL_ID = 700731099705508010 # 703467261176053811
+PRELIM_VOTING_CHANNEL_ID = 701954343447953428 # 703467261176053811
 VOTING_CHANNEL_ID = 703467201683914822
 SHIP_CREW = 701963261557342299
 SAILOR = 702282763570511882
@@ -32,6 +32,13 @@ class Voting(commands.Cog):
     async def loop_prelim(self):
         await self.start_prelims()
 
+    @loop_prelim.before_loop
+    async def before_loop_prelim(self):
+        print('hey')
+        datetime_obj = await self.get_next_weekday(5)
+        print(datetime_obj)
+        await discord.utils.sleep_until(datetime_obj)
+        
     async def get_next_weekday(self, weekday):
         d = datetime.utcnow().replace(hour=0, minute=0, second=0)
         t = timedelta((7 + weekday - d.weekday()) % 7)
@@ -44,12 +51,6 @@ class Voting(commands.Cog):
         for i in read_file('data/suggestions.Json'):
             await self.post_suggestion(self.prelim_voting_channel, i['suggestion'], i['jump_url'])
             time.sleep(.3)
-
-    @loop_prelim.before_loop
-    async def before_loop_prelim(self):
-        print('hey')
-        datetime_obj = await self.get_next_weekday(5)
-        await discord.utils.sleep_until(datetime_obj)
 
     async def post_suggestion(self, channel, suggestion, jump_url = "N/A"):
         embed = discord.Embed(title="Vote")
