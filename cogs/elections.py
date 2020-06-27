@@ -33,7 +33,6 @@ class ElectionCog(commands.Cog):
                 message = await channel.send("_ _")
                 self.election_contents["message"] = message.id
                 self.write_to_file("data/elections.Json", self.election_contents)
-                file_output_object.close()
 
             message = await channel.fetch_message(int(read_file("data/elections.Json")["message"]))
             await update_nominations(ctx, message)
