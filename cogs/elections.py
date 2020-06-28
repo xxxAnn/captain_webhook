@@ -36,7 +36,7 @@ class ElectionCog(commands.Cog):
                 self.write_to_file("data/elections.Json", self.election_contents)
             print('04')
             # message = await channel.fetch_message(int(read_file("data/elections.Json")["message"]))
-            await update_nominations(ctx, message)
+            # await update_nominations(ctx, message)
             print('05')
         else:
             await ctx.send("Role cannot be nominated")
