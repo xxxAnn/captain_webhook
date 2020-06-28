@@ -23,21 +23,16 @@ class ElectionCog(commands.Cog):
         list_roles = [700732836772053013, 700732374471934053, 701964825227427941, 700733089856356363, 726946708654653590]
         channel = self.bot.get_channel(BALLOT_CHANNEL_ID)  # 703035799138074715,
         if role.id in list_roles:
-            print('01')
             if not str(user.id) in read_file("data/elections.Json"):
                 add_nominee(user.id, role.id)
-            print('02')
             if self.role_id_not_in_elections(role.id, user.id):
                 self.add_role_id_to_elections(role.id, user.id)
-            print('03')
             if read_file("data/elections.Json")["message"] == False:
                 message = await channel.send("_ _")
                 self.election_contents["message"] = message.id
                 self.write_to_file("data/elections.Json", self.election_contents)
-            print('04')
-            # message = await channel.fetch_message(int(read_file("data/elections.Json")["message"]))
-            # await update_nominations(ctx, message)
-            print('05')
+            message = await channel.fetch_message(int(read_file("data/elections.Json")["message"]))
+            await update_nominations(ctx, message)
         else:
             await ctx.send("Role cannot be nominated")
 
