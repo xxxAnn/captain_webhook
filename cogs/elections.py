@@ -20,7 +20,7 @@ class ElectionCog(commands.Cog):
 
     @commands.command()
     async def nominate(self, ctx, user: discord.Member, role: discord.Role):
-        list_roles = [700732836772053013, 700732374471934053, 701964825227427941, 700733089856356363, 726946708654653590]
+        list_roles = [700732836772053013, 700732374471934053, 701964825227427941, 700733089856356363, 724915974943408177]
         channel = self.bot.get_channel(BALLOT_CHANNEL_ID)  # 703035799138074715,
         if role.id in list_roles:
             if not str(user.id) in read_file("data/elections.Json"):
