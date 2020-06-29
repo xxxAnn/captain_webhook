@@ -116,7 +116,7 @@ async def update_nominations(ctx, message):
         if i != "message":
             nom = get_nominee(ctx, i, ctx.guild.get_member(int(i)))
             role_list = []
-            for role_id in nom.list: role_list.append(ctx.guild.get_role(int(role_id['nominee_role_id'])))
+            for role_id in nom.roles: role_list.append(ctx.guild.get_role(int(role_id['nominee_role_id'])))
             list_names = ""
             for wxz in role_list:
                 list_names += wxz.name + " "
