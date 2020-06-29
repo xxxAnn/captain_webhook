@@ -18,7 +18,7 @@ class Voting(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.loop_prelim.start()
-        # self.loop_voting.start()
+        self.loop_voting.start()
         guild = self.bot.get_guild(700665943835148330)
         self.ship_crew_role = guild.get_role(SHIP_CREW)
         self.sailor_role = guild.get_role(SAILOR)
