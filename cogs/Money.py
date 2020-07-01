@@ -418,7 +418,7 @@ class Economy(commands.Cog):
         await ctx.send(string)
 
     @commands.command()
-    async def search(self, ctx):
+    async def click(self, ctx):
         cramed = cram()
         player = constructPlayer(ctx.author.id)
         if player.energy["Val"]>0:
