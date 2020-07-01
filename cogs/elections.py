@@ -43,6 +43,7 @@ class ElectionCog(commands.Cog):
         return True
 
     def add_role_id_to_elections(self, role_id, user_id):
+        self.election_contents = read_file("data/elections.Json")
         self.election_contents[str(user_id)].append({ "nominee_role_id": role_id, "votes":[] })
         self.write_to_file("data/elections.Json", self.election_contents)
 
