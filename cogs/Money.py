@@ -363,11 +363,9 @@ class Economy(commands.Cog):
         string = ""
         for i in cramed["crafts"].keys():
             item = cramed["crafts"][i]
-            list1 = find_item_from_id(item['list1'])
-            print(list1)
-            text= "**{0}**, Requires Item: **{2}** __x{1}__".format(item["Result"], item["list2"][0], list1[0].name)
-            if len(list1)>1:
-                text+= " and Item Id **{1}** __x{0}__".format(item["list2"][1], list1[1].name)
+            text= "**{0}**, Requires Item: **{2}** __x{1}__".format(item["Result"], item["list2"][0], find_item_from_id(list1[0]).name)
+            if len(item['list1'])>1:
+                text+= " and Item Id **{1}** __x{0}__".format(item["list2"][1], find_item_from_id(list1[1]).name)
             text+="\n"
             string+=text
         await ctx.send(string)
