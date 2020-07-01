@@ -40,7 +40,7 @@ class Miscellaneous(commands.Cog):
         self.last_topic = ""
         self.version = '1.11'
         self.changelog_text = ["Completely automated the voting process", "Fixed the nomination process"]
-        self.changelog = "**__"+self.version+"__**"+self.create_changelog_from_text
+        self.changelog = "**__"+self.version+"__**"+self.create_changelog_from_text()
 
     def create_changelog_from_text(self):
         str_text = ""
