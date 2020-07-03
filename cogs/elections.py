@@ -26,7 +26,7 @@ class ElectionCog(commands.Cog):
             if not str(user.id) in read_file("data/elections.Json"):
                 add_nominee(user.id, role.id)
             if self.role_id_not_in_elections(role.id, user.id):
-                self._id_to_elections(role.id, user.id)
+                self.add_role_id_to_elections(role.id, user.id)
             if read_file("data/elections.Json")["message"] == False:
                 message = await channel.send("_ _")
                 self.election_contents["message"] = message.id
