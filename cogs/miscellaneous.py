@@ -4,12 +4,16 @@ import time
 from Libraries.pirate_lib import read_file, write_file, append_topic, get_topic
 from config.config import admin_list
 from wiktionaryparser import WiktionaryParser
-from Libraries.paginator import Pages
+from Libraries.paginator import Pages, PagesFromMessage
 from textblob import TextBlob
 import json
 import time
 import operator
 from iso639 import languages
+from random_word import RandomWords
+from wordfreq import word_frequency
+from wordfreq import zipf_frequency
+random_words = RandomWords()
 parser = WiktionaryParser()
 
 SUGGESTIONS_CHANNEL = 701922472538144778
@@ -18,11 +22,15 @@ HELP_CHANNEL = 700754951558660106
 HELP_LOGS_CHANNEL = 700731099705508010
 PRELIM_VOTING_CHANNEL = 703467261176053811
 VOTING_CHANNEL = 703467201683914822
+learner_role_activated = True
 UPVOTE_EMOJI = "<:voteaye:701929407647842374>"
 UPVOTE_ID = 701929407647842374
 DOWNVOTE_EMOJI = "<:votenay:701929705074589696>"
 DOWNVOTE_ID = 701929705074589696
-
+HELP_LIST = ['Correctme: adds the Correctme tag to your nickname', "Define: returns wiktionary's definition of a word", 'Members: returns the amount of non-bot users in the guild', 'Topic: returns a topic pseudo-randomely', 'TopLanguage: returns the top languages by message count', 'Frequency: returns the frequency of a word on a scale of 0 to 8']
+WORD_OF_THE_DAY_CHANNEL_ID = None
+STUDENT_MODE_ROLE_ID = 720369584481501295
+LEARNER_ROLE_ID = 721873100123406357
 
 class Miscellaneous(commands.Cog):
 
@@ -30,6 +38,47 @@ class Miscellaneous(commands.Cog):
         self.bot = bot
         self.epoch = time.time()
         self.last_topic = ""
+        self.version = '1.11'
+        self.changelog_text = ["Completely automated the voting process", "Fixed the nomination process"]
+        self.changelog = "**__"+self.version+"__**"+self.create_changelog_from_text()
+
+    def create_changelog_from_text(self):
+        str_text = ""
+        str_decoration = "\n・"
+        for change in self.changelog_text:
+            str_text+=str_decoration+change
+        return str_text
+
+    @commands.command(aliases=['cg'])
+    async def changelog(self, ctx):
+        await ctx.send(self.changelog)
+
+    async def toggle_learner_role(self):
+        if learner_role_activated is False:
+            learner_role_activated = True
+        else:
+            learner_role_activated = False
+    @commands.command(aliases=['fq'])
+    async def frequency(self, ctx, word):
+        await ctx.send(str(zipf_frequency(word, 'en', wordlist='best'))+'/8')
+
+    @commands.Cog.listener()
+    async def on_member_update(self, before, after):
+        if learner_role_activated is True:
+            GUILD = self.bot.get_guild(700665943835148330)
+            C2_ROLE = GUILD.get_role(700732394881286225)
+            C1_ROLE = GUILD.get_role(700732946893635605)
+            B2_ROLE = GUILD.get_role(700732968217346099)
+            B1_ROLE = GUILD.get_role(701045578938974240)
+            A2_ROLE = GUILD.get_role(700733050547470337)
+            A1_ROLE = GUILD.get_role(701042693811339314)
+            LEARNER_ROLE = GUILD.get_role(LEARNER_ROLE_ID)
+            if C2_ROLE in after.roles or C1_ROLE in after.roles or B2_ROLE in after.roles or B1_ROLE in after.roles or A2_ROLE in after.roles or A1_ROLE in after.roles:
+                if not LEARNER_ROLE in after.roles:
+                    await after.add_roles(LEARNER_ROLE)
+            else:
+                if LEARNER_ROLE in after.roles:
+                    await after.remove_roles(LEARNER_ROLE)
 
     @commands.command()
     async def members(self, ctx):
@@ -40,9 +89,23 @@ class Miscellaneous(commands.Cog):
                 list_users.append(i)
         await ctx.send("There are {0} sailors on the ship".format(len(list_users)))
 
+    @commands.command(aliases=['stmd'])
+    async def studentmode(self, ctx):
+        role = ctx.guild.get_role(STUDENT_MODE_ROLE_ID)
+        if role in ctx.author.roles:
+            await ctx.author.remove_roles(role)
+            await ctx.send("Removed Student Mode")
+        else:
+            await ctx.author.add_roles(role)
+            await ctx.send("Added Student Mode")
+
+    @commands.command(aliases=['ver'])
+    async def version(self, ctx):
+        await ctx.send('version {0}'.format(self.version))
+
     @commands.command()
     async def topic(self, ctx):
-        if time.time() - self.epoch > 9:
+        if time.time() - self.epoch > 299:
             self.epoch = time.time()  # resets the epoch time
             embed = discord.Embed(title="Conversation topic", color=0x0d25cc)
             topic_variable = get_topic()
@@ -65,19 +128,49 @@ class Miscellaneous(commands.Cog):
         else:
             await ctx.send("You do not have permission to do that")
 
+    async def get_word_of_the_day(self):
+        word_of_the_day = random_words.get_random_word(hasDictionaryDef="true", includePartOfSpeech="noun,verb,adjective", minCorpusCount=1, maxCorpusCount=10, minDictionaryCount=1, maxDictionaryCount=10, minLength=5)
+        return word_of_the_day
+
     @commands.command(aliases=['def'])
     async def define(self, ctx, *original_word):
         word = "_".join(original_word)
-        word = parser.fetch(word)
-        definition = word[0]["definitions"][0]["text"]
-        pronunciation = word[0]["pronunciations"]["text"]
+        if str.lower(word) == "pepely":
+            definition = ["timidly or shyly \n *He pepely looked around the corner* - Coal", "Rapidly peeking at someone or something \n *I pepely peaked in the locker-room* - Law", "doing something and making it the shittiest work ever \n *Dmitri never gets it right; whatever he does, he does it pepely, indeed.* - Neo"]
+            pages = Pages(ctx, entries=definition, per_page=4, custom_title="Definition of " + " ".join(original_word))
+            await pages.paginate()
+            return
+        if str.lower(word) == "breadly":
+            definition = ["to do as a personified piece of bread would. \n *I love putting my hands in wheat, you know, massaging it, breadly*. - Panto", "cook something like how you bake bread \n *Ma' man always cooks da meat breadly.* - Neo"]
+            pages = Pages(ctx, entries=definition, per_page=4, custom_title="Definition of " + " ".join(original_word))
+            await pages.paginate()
+            return
+        try:
+            word = parser.fetch(word)
+            pronunciation = word[0]["pronunciations"]["text"]
+            definition = word[0]["definitions"][0]["text"]
+            definition.pop(0)
+        except:
+            await ctx.send('Word was not found, try changing the capitalization and check your spelling!')
+            return
+        if not definition:
+            await ctx.send('Word was not found, try changing the capitalization and check your spelling!')
+            return
         sound = word[0]["pronunciations"]["audio"]
         pages = Pages(ctx, entries=definition, per_page=4, custom_title="Definition of " + " ".join(original_word))
         await pages.paginate()
 
-    @commands.command(aliases=["langdiff", "langdifficulty", "lh", "ld"])
-    async def languagedifficulty(self, ctx):
-        await ctx.send("How hard a language is depends mostly on the languages you already know and your motivation to learn said language")
+    @commands.command(aliases=['evv'])
+    async def evaluatevalue(self, ctx, *, arg):
+        if ctx.message.author.id in admin_list:
+            arg="".join(arg)
+            x=eval(arg)
+            await ctx.send(x)
+            try:
+                z = await x
+                await ctx.send(z)
+            except:
+                pass
 
     @commands.command()
     async def tag(self, ctx,  *, arg):
@@ -96,6 +189,9 @@ class Miscellaneous(commands.Cog):
         await self.handle_language(message)
         await self.handle_kyando(message)
         await self.handle_suggestion(message)
+        if self.bot.user in message.mentions:
+            pages = PagesFromMessage(self.bot, message, entries=HELP_LIST, per_page=10, custom_title="Here's the list of commands:")
+            await pages.paginate()
 
     async def handle_help(self, message):
         help_logs_channel = self.bot.get_channel(HELP_LOGS_CHANNEL)
@@ -123,7 +219,7 @@ class Miscellaneous(commands.Cog):
                                   skipkeys=True)
 
     async def handle_kyando(self, message):
-        if "kyando" in str.lower(message.content):
+        if "kyando" in str.lower(message.content) and message.author.id is not 331431342438875137:
             await self.bot.get_user(331431342438875137).send("You were mentioned in: "+ message.jump_url)
 
     async def handle_suggestion(self, message):
@@ -152,14 +248,12 @@ class Miscellaneous(commands.Cog):
 
     @commands.command(aliases=['cm'])
     async def correctme(self, ctx):
-        role = ctx.guild.get_role(705852512267141230)
-        if role in ctx.author.roles:
-            #await ctx.author.remove_roles(role)
-            await ctx.send("Removed correct me role")
+        if "✍" in ctx.author.display_name:
+            await ctx.author.edit(nick=ctx.author.display_name.replace("✍", ""))
+            await ctx.send("Removed correct me tag")
         else:
-            #await ctx.author.add_roles(role)
             await ctx.author.edit(nick=ctx.author.display_name+" ✍")
-            await ctx.send("Added correct me role")
+            await ctx.send("Added correct me tag")
 
     @commands.command(aliases=['sp'])
     async def startprelim(self, ctx):
@@ -187,11 +281,16 @@ class Miscellaneous(commands.Cog):
                         num_upvotes = num_upvotes + reaction[1]
                     elif reaction[0] == DOWNVOTE_ID:
                         num_downvotes = num_downvotes + reaction[1]
-                
+
                 if num_upvotes > num_downvotes:
                     # extract suggestion and jump_url from previous embed
-                    await self.post_suggestion(message.embeds[0].fields[0].value, message.embeds[0].fields[1].value)
-                
+
+                    await self.post_suggestion(self.bot.get_channel(VOTING_CHANNEL), message.embeds[0].fields[0].value, message.embeds[0].fields[1].value)
+
+    @commands.command(aliases=['help', '?'])
+    async def help_command(self, ctx):
+        pages = Pages(ctx, entries=HELP_LIST, per_page=10, custom_title="Help")
+        await pages.paginate()
 
     async def post_suggestion(self, channel, suggestion, jump_url = "N/A"):
         embed = discord.Embed(title="Vote")

@@ -5,7 +5,7 @@ import json
 from config.config import admin_list
 import re
 PRELIM_CHANNEL_ID = 703043049806233620  # 703043049806233620
-
+BALLOT_CHANNEL_ID = 703035799138074715
 UPVOTE_EMOJI ="<:voteaye:701929407647842374>"
 DOWNVOTE_EMOJI ="<:votenay:701929705074589696>"
 UPVOTE_EMOJI_ID = 701929407647842374
@@ -20,21 +20,17 @@ class ElectionCog(commands.Cog):
 
     @commands.command()
     async def nominate(self, ctx, user: discord.Member, role: discord.Role):
-        list_roles = [700732836772053013, 700732374471934053, 701964825227427941, 700733089856356363]
-        channel = self.bot.get_channel(PRELIM_CHANNEL_ID)  # 703035799138074715
+        list_roles = [700732836772053013, 700732374471934053, 701964825227427941, 700733089856356363, 724915974943408177]
+        channel = self.bot.get_channel(BALLOT_CHANNEL_ID)  # 703035799138074715,
         if role.id in list_roles:
             if not str(user.id) in read_file("data/elections.Json"):
                 add_nominee(user.id, role.id)
-
             if self.role_id_not_in_elections(role.id, user.id):
                 self.add_role_id_to_elections(role.id, user.id)
-
-            if read_file("data/elections.Json")["message"] is False:
+            if read_file("data/elections.Json")["message"] == False:
                 message = await channel.send("_ _")
                 self.election_contents["message"] = message.id
                 self.write_to_file("data/elections.Json", self.election_contents)
-                file_output_object.close()
-
             message = await channel.fetch_message(int(read_file("data/elections.Json")["message"]))
             await update_nominations(ctx, message)
         else:
@@ -45,8 +41,9 @@ class ElectionCog(commands.Cog):
             if role_id == nomination['nominee_role_id']:
                 return False
         return True
-    
+
     def add_role_id_to_elections(self, role_id, user_id):
+        self.election_contents = read_file("data/elections.Json")
         self.election_contents[str(user_id)].append({ "nominee_role_id": role_id, "votes":[] })
         self.write_to_file("data/elections.Json", self.election_contents)
 
@@ -73,7 +70,7 @@ class ElectionCog(commands.Cog):
             message = reaction.message.embeds[0]
             nominee_id = re.match(r'^.*?(\d+).*$', message.fields[0].value).groups()[0]
             role_id = re.match(r'^.*?(\d+).*$', message.fields[1].value).groups()[0]
-            
+
             wx = self.election_contents
             nomination_votes = wx[str(nominee_id)][self.find_nomination_index(wx[str(nominee_id)], role_id)]['votes']
             if reaction.emoji.id == UPVOTE_EMOJI_ID:

@@ -84,18 +84,16 @@ def _resolve_member_id(ctx, input):
 
 class Nominee:
 
-    def __init__(self, vote_list, nominated_for, ctx, user_id: int, user_object):
+    def __init__(self, ctx, list, user_id: int, user_object):
         self.whois = user_object
-        print(self.whois)
         self.key = str(user_id)
-        self.votes = vote_list
-        self.for_role = nominated_for
+        self.roles = list
 
 
 def get_nominee(ctx, user_id: str, user_object):
     nominees = read_file("data/elections.Json")
     temp_dict = nominees[user_id]
-    return Nominee(ctx=ctx, vote_list=temp_dict["votes"], nominated_for=temp_dict["nominee_role_id"], user_id=user_id,
+    return Nominee(ctx=ctx, list=temp_dict, user_id=user_id,
                    user_object=user_object)
 
 
@@ -118,7 +116,7 @@ async def update_nominations(ctx, message):
         if i != "message":
             nom = get_nominee(ctx, i, ctx.guild.get_member(int(i)))
             role_list = []
-            for role_id in nom.for_role: role_list.append(ctx.guild.get_role(int(role_id)))
+            for role_id in nom.roles: role_list.append(ctx.guild.get_role(int(role_id['nominee_role_id'])))
             list_names = ""
             for wxz in role_list:
                 list_names += wxz.name + " "
