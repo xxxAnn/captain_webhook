@@ -8,8 +8,8 @@ PRELIM_CHANNEL_ID = 703043049806233620  # 703043049806233620
 BALLOT_CHANNEL_ID = 703035799138074715
 UPVOTE_EMOJI ="<:voteaye:701929407647842374>"
 DOWNVOTE_EMOJI ="<:votenay:701929705074589696>"
-UPVOTE_EMOJI_ID = 701929407647842374
-DOWNVOTE_EMOJI_ID = 701929705074589696
+UPVOTE_EMOJI_ID = 633448690874580994
+DOWNVOTE_EMOJI_ID = 632082533177229313
 
 
 class ElectionCog(commands.Cog):
@@ -21,7 +21,7 @@ class ElectionCog(commands.Cog):
     @commands.command()
     async def nominate(self, ctx, user: discord.Member, role: discord.Role):
         list_roles = [700732836772053013, 700732374471934053, 701964825227427941, 700733089856356363, 724915974943408177]
-        channel = self.bot.get_channel(BALLOT_CHANNEL_ID)  # 703035799138074715,
+        channel = self.bot.get_channel(703035799138074715)
         if role.id in list_roles:
             if not str(user.id) in read_file("data/elections.Json"):
                 add_nominee(user.id, role.id)
@@ -65,12 +65,13 @@ class ElectionCog(commands.Cog):
                         await message.add_reaction(DOWNVOTE_EMOJI)
 
     @commands.Cog.listener()
-    async def on_raw_reaction_add(self, reaction, user):
+    async def on_reaction_add(self, reaction, user):
         if reaction.message.channel.id == PRELIM_CHANNEL_ID and user.id != self.bot.user.id:
             message = reaction.message.embeds[0]
-            nominee_id = re.match(r'^.*?(\d+).*$', message.fields[0].value).groups()[0]
+            print("NOM ID: " + message.fields[0].value)
+            nominee_id = re.search(r'<@(\d+)>$', message.fields[0].value).groups()[0]
             role_id = re.match(r'^.*?(\d+).*$', message.fields[1].value).groups()[0]
-
+            
             wx = self.election_contents
             nomination_votes = wx[str(nominee_id)][self.find_nomination_index(wx[str(nominee_id)], role_id)]['votes']
             if reaction.emoji.id == UPVOTE_EMOJI_ID:
