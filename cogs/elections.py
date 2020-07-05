@@ -58,7 +58,7 @@ class ElectionCog(commands.Cog):
                         role = nomination['nominee_role_id']
 
                         embed = discord.Embed(title="Preliminary Voting")
-                        embed.add_field(name="Vote nominee: ", value=self.bot.get_user(int(user)).mention)
+                        embed.add_field(name="Vote nominee: ", value=str(self.bot.get_user(int(user)).name)+"<@"+str(int(user))+">")
                         embed.add_field(name="Role: ", value=ctx.guild.get_role(int(role)).mention)
                         message = await channel.send(embed=embed)
                         await message.add_reaction(UPVOTE_EMOJI)
@@ -92,6 +92,7 @@ class ElectionCog(commands.Cog):
                 self.write_to_file("data/elections.Json", wx)
 
             await reaction.remove(user)
+            await user.send("Your vote has been counted ✅")
 
     def find_nomination_index(self, nominee, role_id):
         index = 0
