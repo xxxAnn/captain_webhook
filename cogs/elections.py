@@ -68,7 +68,6 @@ class ElectionCog(commands.Cog):
     async def on_reaction_add(self, reaction, user):
         if reaction.message.channel.id == PRELIM_CHANNEL_ID and user.id != self.bot.user.id:
             message = reaction.message.embeds[0]
-            print("NOM ID: " + message.fields[0].value)
             nominee_id = re.search(r'<@(\d+)>$', message.fields[0].value).groups()[0]
             role_id = re.match(r'^.*?(\d+).*$', message.fields[1].value).groups()[0]
             
