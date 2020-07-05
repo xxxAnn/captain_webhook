@@ -92,6 +92,7 @@ class ElectionCog(commands.Cog):
                 self.write_to_file("data/elections.Json", wx)
 
             await reaction.remove(user)
+            await user.send("Your vote has been counted ✅")
 
     def find_nomination_index(self, nominee, role_id):
         index = 0
