@@ -65,34 +65,38 @@ class ElectionCog(commands.Cog):
                         await message.add_reaction(DOWNVOTE_EMOJI)
 
     @commands.Cog.listener()
-    async def on_reaction_add(self, reaction, user):
-        if reaction.message.channel.id == PRELIM_CHANNEL_ID and user.id != self.bot.user.id:
-            message = reaction.message.embeds[0]
-            nominee_id = re.search(r'<@(\d+)>$', message.fields[0].value).groups()[0]
-            role_id = re.match(r'^.*?(\d+).*$', message.fields[1].value).groups()[0]
-            
-            wx = self.election_contents
-            nomination_votes = wx[str(nominee_id)][self.find_nomination_index(wx[str(nominee_id)], role_id)]['votes']
-            if reaction.emoji.id == UPVOTE_EMOJI_ID:
-                vote_index = self.check_for_duplicates(nomination_votes, user.id)
-                if vote_index == -1:
-                    nomination_votes.append({ 'user_id': user.id, 'vote': 1})
-                else:
-                    nomination_votes[vote_index]['vote'] = 1
+    async def on_raw_reaction_add(self, payload):
+        if payload.channel_id == PRELIM_CHANNEL_ID and payload.user_id != self.bot.user.id:
+            message = await self.bot.get_channel(payload.channel_id).fetch_message(payload.message_id)
+            # only checks messages that were sent by the bot
+            if message.author.id == self.bot.user.id:
+                nominee_name = message.embeds[0]
+                nominee_id = re.search(r'<@(\d+)>$', nominee_name.fields[0].value).groups()[0]
+                role_id = re.match(r'^.*?(\d+).*$', nominee_name.fields[1].value).groups()[0]
+                
+                wx = self.election_contents
+                nomination_votes = wx[str(nominee_id)][self.find_nomination_index(wx[str(nominee_id)], role_id)]['votes']
+                if payload.emoji.id == UPVOTE_EMOJI_ID:
+                    vote_index = self.check_for_duplicates(nomination_votes, payload.user_id)
+                    if vote_index == -1:
+                        nomination_votes.append({ 'user_id': payload.user_id, 'vote': 1})
+                    else:
+                        nomination_votes[vote_index]['vote'] = 1
 
-                self.write_to_file("data/elections.Json", wx)
+                    self.write_to_file("data/elections.Json", wx)
 
-            elif reaction.emoji.id == DOWNVOTE_EMOJI_ID:
-                vote_index = self.check_for_duplicates(nomination_votes, user.id)
-                if vote_index == -1:
-                    nomination_votes.append({ 'user_id': user.id, 'vote': -1})
-                else:
-                    nomination_votes[vote_index]['vote'] = -1
+                elif payload.emoji.id == DOWNVOTE_EMOJI_ID:
+                    vote_index = self.check_for_duplicates(nomination_votes, payload.user_id)
+                    if vote_index == -1:
+                        nomination_votes.append({ 'user_id': payload.user_id, 'vote': -1})
+                    else:
+                        nomination_votes[vote_index]['vote'] = -1
 
-                self.write_to_file("data/elections.Json", wx)
+                    self.write_to_file("data/elections.Json", wx)
 
-            await reaction.remove(user)
-            await user.send("Your vote has been counted ✅")
+                
+                await message.remove_reaction(payload.emoji, payload.member)
+                await self.bot.get_user(int(payload.user_id)).send("Your vote has been counted ✅")
 
     def find_nomination_index(self, nominee, role_id):
         index = 0
