@@ -65,12 +65,12 @@ class ElectionCog(commands.Cog):
                         await message.add_reaction(DOWNVOTE_EMOJI)
 
     @commands.Cog.listener()
-    async def on_raw_reaction_add(self, reaction, user):
+    async def on_reaction_add(self, reaction, user):
         if reaction.message.channel.id == PRELIM_CHANNEL_ID and user.id != self.bot.user.id:
             message = reaction.message.embeds[0]
-            nominee_id = re.match(r'^.*?(\d+).*$', message.fields[0].value).groups()[0]
+            nominee_id = re.search(r'<@(\d+)>$', message.fields[0].value).groups()[0]
             role_id = re.match(r'^.*?(\d+).*$', message.fields[1].value).groups()[0]
-
+            
             wx = self.election_contents
             nomination_votes = wx[str(nominee_id)][self.find_nomination_index(wx[str(nominee_id)], role_id)]['votes']
             if reaction.emoji.id == UPVOTE_EMOJI_ID:
