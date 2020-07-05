@@ -58,7 +58,7 @@ class ElectionCog(commands.Cog):
                         role = nomination['nominee_role_id']
 
                         embed = discord.Embed(title="Preliminary Voting")
-                        embed.add_field(name="Vote nominee: ", value="<@"+str(int(user))+">")
+                        embed.add_field(name="Vote nominee: ", value=str(self.bot.get_user(int(user)).name)+"<@"+str(int(user))+">")
                         embed.add_field(name="Role: ", value=ctx.guild.get_role(int(role)).mention)
                         message = await channel.send(embed=embed)
                         await message.add_reaction(UPVOTE_EMOJI)
