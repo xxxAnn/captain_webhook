@@ -8,8 +8,8 @@ PRELIM_CHANNEL_ID = 703043049806233620  # 703043049806233620
 BALLOT_CHANNEL_ID = 703035799138074715
 UPVOTE_EMOJI ="<:voteaye:701929407647842374>"
 DOWNVOTE_EMOJI ="<:votenay:701929705074589696>"
-UPVOTE_EMOJI_ID = 633448690874580994
-DOWNVOTE_EMOJI_ID = 632082533177229313
+UPVOTE_EMOJI_ID = 701929407647842374
+DOWNVOTE_EMOJI_ID = 701929705074589696
 
 
 class ElectionCog(commands.Cog):
@@ -21,7 +21,7 @@ class ElectionCog(commands.Cog):
     @commands.command()
     async def nominate(self, ctx, user: discord.Member, role: discord.Role):
         list_roles = [700732836772053013, 700732374471934053, 701964825227427941, 700733089856356363, 724915974943408177]
-        channel = self.bot.get_channel(703035799138074715)
+        channel = self.bot.get_channel(BALLOT_CHANNEL_ID)  # 703035799138074715,
         if role.id in list_roles:
             if not str(user.id) in read_file("data/elections.Json"):
                 add_nominee(user.id, role.id)
