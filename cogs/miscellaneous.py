@@ -58,9 +58,24 @@ class Miscellaneous(commands.Cog):
             learner_role_activated = True
         else:
             learner_role_activated = False
+
     @commands.command(aliases=['fq'])
     async def frequency(self, ctx, word):
-        await ctx.send(str(zipf_frequency(word, 'en', wordlist='best'))+'/8')
+        frequency=int(zipf_frequency(word, 'en', wordlist='best'))
+        text=""
+        if frequency>0:
+            text="Very rare"
+        if frequency>1:
+            text="Rare"
+        if frequency>3:
+            text="Uncommon"
+        if frequency>5:
+            text="Common"
+        if frequency>6:
+            text="Popular"
+        if frequency>7:
+            text="Very popular"
+        await ctx.send(text)
 
     @commands.Cog.listener()
     async def on_member_update(self, before, after):
