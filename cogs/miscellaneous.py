@@ -9,10 +9,11 @@ from textblob import TextBlob
 import json
 import time
 import operator
-from iso639 import languages
+# from iso639 import languages
 from random_word import RandomWords
 from wordfreq import word_frequency
 from wordfreq import zipf_frequency
+from Libraries.query import RequestHandler
 random_words = RandomWords()
 parser = WiktionaryParser()
 
@@ -31,6 +32,7 @@ HELP_LIST = ['Correctme: adds the Correctme tag to your nickname', "Define: retu
 WORD_OF_THE_DAY_CHANNEL_ID = None
 STUDENT_MODE_ROLE_ID = 720369584481501295
 LEARNER_ROLE_ID = 721873100123406357
+FLUENT_ROLE_ID = 745729567930450071
 
 class Miscellaneous(commands.Cog):
 
@@ -38,9 +40,14 @@ class Miscellaneous(commands.Cog):
         self.bot = bot
         self.epoch = time.time()
         self.last_topic = ""
-        self.version = '1.11'
-        self.changelog_text = ["Completely automated the voting process", "Fixed the nomination process"]
+        self.version = '1.2'
+        self.changelog_text = ["added nicosearch command"]
         self.changelog = "**__"+self.version+"__**"+self.create_changelog_from_text()
+
+    @commands.command(aliases=["ニコクエリ"])
+    async def nicosearch(self, ctx, query):
+        response = RequestHandler.get_video(q=query)
+        await ctx.send(str(response[0]))
 
     def create_changelog_from_text(self):
         str_text = ""
@@ -88,12 +95,23 @@ class Miscellaneous(commands.Cog):
             A2_ROLE = GUILD.get_role(700733050547470337)
             A1_ROLE = GUILD.get_role(701042693811339314)
             LEARNER_ROLE = GUILD.get_role(LEARNER_ROLE_ID)
-            if C2_ROLE in after.roles or C1_ROLE in after.roles or B2_ROLE in after.roles or B1_ROLE in after.roles or A2_ROLE in after.roles or A1_ROLE in after.roles:
+            FLUENT_ROLE = GUILD.get_role(FLUENT_ROLE_ID)
+            if B2_ROLE in after.roles or B1_ROLE in after.roles or A2_ROLE in after.roles or A1_ROLE in after.roles:
                 if not LEARNER_ROLE in after.roles:
+                    if FLUENT_ROLE in after.roles:
+                        await after.remove_roles(FLUENT_ROLE)
                     await after.add_roles(LEARNER_ROLE)
+
+            elif C2_ROLE in after.roles or C1_ROLE in after.roles:
+                if not FLUENT_ROLE in after.roles:
+                    if LEARNER_ROLE in after.roles:
+                        await after.remove_roles(LEARNER_ROLE)
+                    await after.add_roles(FLUENT_ROLE)
             else:
                 if LEARNER_ROLE in after.roles:
                     await after.remove_roles(LEARNER_ROLE)
+                if FLUENT_ROLE in after.roles:
+                    await after.remove_roles(FLUENT_ROLE)
 
     @commands.command()
     async def members(self, ctx):

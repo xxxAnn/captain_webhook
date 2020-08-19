@@ -35,7 +35,7 @@ async def on_ready():
     print(client.user.name)
     print(client.user.id)
     print('------')
-    config.guild = client.get_guild(700665943835148330)
+    
     for extension in initial_extensions:
         client.load_extension(extension)
 
