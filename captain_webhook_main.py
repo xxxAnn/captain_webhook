@@ -37,6 +37,7 @@ async def on_ready():
     print('------')
     
     for extension in initial_extensions:
+        print("Loaded ", extension)
         client.load_extension(extension)
 
 
