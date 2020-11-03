@@ -1,12 +1,14 @@
 import discord
 from discord.ext import tasks, commands
+from discord.ext.commands import has_permissions
 from datetime import datetime, timedelta
 from Libraries.pirate_lib import read_file, write_file, append_topic, get_topic
 import time
 
 PRELIM_VOTING_CHANNEL_ID = 703467261176053811 # 703467261176053811
-VOTING_CHANNEL_ID = 703467201683914822
-SHIP_CREW = 701963261557342299
+VOTING_CHANNEL_ID = 703467201683914822 # 703467201683914822
+INTERNAL_RESULT_CHANNEL_ID = 773306395436646420 # 773306395436646420
+SHIP_CREW = 701963261557342299 
 SAILOR = 702282763570511882
 UPVOTE_EMOJI = "<:voteaye:701929407647842374>"
 UPVOTE_ID = 701929407647842374
@@ -20,6 +22,7 @@ class Voting(commands.Cog):
         self.loop_prelim.start()
         self.loop_voting.start()
         guild = self.bot.get_guild(700665943835148330)
+        self.log_channel = guild.get_channel(INTERNAL_RESULT_CHANNEL_ID)
         self.ship_crew_role = guild.get_role(SHIP_CREW)
         self.sailor_role = guild.get_role(SAILOR)
         self.voting_channel = guild.get_channel(VOTING_CHANNEL_ID)
@@ -34,7 +37,6 @@ class Voting(commands.Cog):
 
     @loop_prelim.before_loop
     async def before_loop_prelim(self):
-        print('hey')
         datetime_obj = await self.get_next_weekday(5)
         print(datetime_obj)
         await discord.utils.sleep_until(datetime_obj)
@@ -46,11 +48,15 @@ class Voting(commands.Cog):
 
     async def start_prelims(self):
         await self.voting_channel.set_permissions(self.ship_crew_role, read_messages=False)
+        await self.prelim_voting_channel.purge(limit=300)
+        await self.log_voting()
         await self.prelim_voting_channel.set_permissions(self.ship_crew_role, read_messages=True, send_messages=False)
         await self.prelim_voting_channel.set_permissions(self.sailor_role, read_messages=True, send_messages=False)
         for i in read_file('data/suggestions.Json'):
             await self.post_suggestion(self.prelim_voting_channel, i['suggestion'], i['jump_url'])
             time.sleep(.3)
+        with open("data/suggestions.Json", "w") as f:
+            f.write("[]")
 
     async def post_suggestion(self, channel, suggestion, jump_url = "N/A"):
         embed = discord.Embed(title="Vote")
@@ -65,6 +71,28 @@ class Voting(commands.Cog):
     @tasks.loop(hours=168)
     async def loop_voting(self):
         await self.start_voting()
+
+    async def log_voting(self):
+        bot_messages = await self.voting_channel.history().filter(lambda member: member.author.id == self.bot.user.id).flatten()
+        bot_messages.reverse()
+        for message in bot_messages:
+            num_upvotes = 0
+            num_downvotes = 0
+
+            for reaction in map(lambda reaction: (reaction.emoji.id, reaction.count), message.reactions):
+                if reaction[0] == UPVOTE_ID:
+                    num_upvotes = num_upvotes + reaction[1]
+                elif reaction[0] == DOWNVOTE_ID:
+                    num_downvotes = num_downvotes + reaction[1]
+
+            if num_upvotes > num_downvotes:
+                await self.log_channel.send(str(message.embeds[0].fields[0].value) + "Passed")
+            elif num_upvotes == num_downvotes:
+                await self.log_channel.send(str(message.embeds[0].fields[0].value) + "Inconclusive")
+            else:
+                await self.log_channel.send(str(message.embeds[0].fields[0].value) + "Denied")
+
+        await self.voting_channel.purge(limit=300)
 
     async def start_voting(self):
         await self.voting_channel.set_permissions(self.ship_crew_role, read_messages=True)
@@ -86,6 +114,12 @@ class Voting(commands.Cog):
                 # extract suggestion and jump_url from previous embed
 
                 await self.post_suggestion(self.voting_channel, message.embeds[0].fields[0].value, message.embeds[0].fields[1].value)
+
+    @commands.command()
+    @has_permissions(administrator=True)
+    async def forcestart(self): 
+        await self.start_prelims()
+        await self.start_voting()
 
     @loop_voting.before_loop
     async def before_loop_voting(self):
