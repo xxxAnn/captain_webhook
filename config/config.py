@@ -25,7 +25,7 @@ class bot_config:
         self.admins = admins
         self.moderators = moderator_list
         self.default_topic_message = default_topic
-        self.client = Bot(command_prefix=self.prefix, case_insensitive=True)
+        self.client = Bot(command_prefix=self.prefix, case_insensitive=True,chunk_guilds_at_startup=False)
         bot_config.__instance = self
         
         
