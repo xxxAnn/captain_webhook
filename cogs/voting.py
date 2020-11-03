@@ -117,7 +117,7 @@ class Voting(commands.Cog):
 
     @commands.command()
     @has_permissions(administrator=True)
-    async def forcestart(self): 
+    async def forcestart(self, ctx): 
         await self.start_prelims()
         await self.start_voting()
 
